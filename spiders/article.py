@@ -39,10 +39,8 @@ def crawlAndSave(type, baseUrl, pageCount, Session):
     for article in crawl(type, baseUrl, page):
       existArticle = session.query(Article).filter_by(id = article['id']).first()
       if existArticle:
-        print('update')
         session.query(Article).filter_by(id = article['id']).update(article)
       else:
-        print('create')
         session.add(Article(**article))
     session.commit()
   session.close()
