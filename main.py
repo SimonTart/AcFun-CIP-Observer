@@ -14,4 +14,4 @@ schedule.every(10).minutes.do(articleJob)
 
 while True:
     schedule.run_pending()
-    time.sleep(1)
+    time.sleep(10 * 100)
