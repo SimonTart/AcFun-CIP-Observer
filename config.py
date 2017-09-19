@@ -17,4 +17,5 @@ ARTICLE_SECTIONS = ({
   'url': 'http://www.acfun.cn/v/list164/index{0}.htm'
 })
 
-ARTICLE_PAGE_COUNT = 200
+ARTICLE_UPDATE_PAGE_COUNT = 2
+ARTICLE_CRAWL_PAGE_COUNT = 10

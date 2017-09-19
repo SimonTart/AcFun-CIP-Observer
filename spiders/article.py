@@ -35,12 +35,19 @@ def crawl(type, baseUrl, pageNum):
 
 def crawlAndSave(type, baseUrl, pageCount, Session):
   session = Session()
+  total = 0
+  new = 0
+  update = 0
   for page in range(1, pageCount):
     for article in crawl(type, baseUrl, page):
       existArticle = session.query(Article).filter_by(id = article['id']).first()
+      total += 1
       if existArticle:
         session.query(Article).filter_by(id = article['id']).update(article)
+        update += 1
       else:
         session.add(Article(**article))
+        new += 1
     session.commit()
   session.close()
+  return total, new, old

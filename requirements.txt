@@ -8,7 +8,6 @@ lxml==3.8.0
 PyMySQL==0.7.11
 pyquery==1.2.17
 requests==2.18.4
-schedule==0.4.3
 six==1.10.0
 SQLAlchemy==1.1.14
 urllib3==1.22
