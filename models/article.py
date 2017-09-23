@@ -1,8 +1,10 @@
 from sqlalchemy import Column, Integer, String, text, DateTime, func
-from . import base
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class Article(base.Base):
+class Article(Base):
   __tablename__ = 'articles'
   id = Column(Integer, primary_key = True)
   type = Column(String(255), nullable = False)
@@ -23,4 +25,3 @@ class Article(base.Base):
     nullable=False,
     server_default = func.current_timestamp()
   )
-

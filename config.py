@@ -1,3 +1,5 @@
+import os
+
 ARTICLE_SECTIONS = ({
   'type': '综合',
   'url': 'http://www.acfun.cn/v/list110/index{0}.htm',
@@ -17,5 +19,20 @@ ARTICLE_SECTIONS = ({
   'url': 'http://www.acfun.cn/v/list164/index{0}.htm'
 })
 
-ARTICLE_UPDATE_PAGE_COUNT = 2
+ARTICLE_UPDATE_PAGE_COUNT = 800
 ARTICLE_CRAWL_PAGE_COUNT = 10
+
+if os.getenv('PYTHON_ENV', 'development') == 'production':
+  db = {
+    'host': 'DB_HOST',
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSPORT'),
+    'database': os.getenv('DB_NAME')
+  }
+else:
+  db = {
+    'host': '127.0.0.1',
+    'user': 'root',
+    'password': '',
+    'database': 'eva_acfun_dev'
+  }

@@ -1,2 +1,5 @@
 **/__pycache__
 eva-acfun/
+alembic_sample.sqlite
+.vscode
+**/__init__.pyc
