@@ -24,7 +24,7 @@ ARTICLE_CRAWL_PAGE_COUNT = 10
 
 if os.getenv('PYTHON_ENV', 'development') == 'production':
   db = {
-    'host': 'DB_HOST',
+    'host': os.getenv('DB_HOST'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSPORT'),
     'database': os.getenv('DB_NAME')
