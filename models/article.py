@@ -11,6 +11,7 @@ class Article(Base):
   title = Column(String(255), nullable = False)
   viewNum = Column('view_num', Integer, nullable = False)
   commentNum = Column('comment_num', Integer, nullable = False)
+  bananaNum = Column('banana_num', Integer)
   publishedAt = Column('published_at', DateTime, nullable = False)
   publishedBy = Column('published_by', Integer, nullable = False)
   updateAt = Column(

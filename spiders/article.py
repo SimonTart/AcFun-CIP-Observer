@@ -2,6 +2,10 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from models.article import Article
+from db import Session
+from config import TYPE_TO_CHANNEL_ID
+from sqlalchemy import or_, update
+import arrow
 
 def crawl(type, baseUrl, pageNum):
   if pageNum == 1:
@@ -33,7 +37,7 @@ def crawl(type, baseUrl, pageNum):
     }
 
 
-def crawlAndSave(type, baseUrl, pageCount, Session):
+def crawlAndSave(type, baseUrl, pageCount):
   session = Session()
   count = 0
   new = 0
@@ -51,3 +55,31 @@ def crawlAndSave(type, baseUrl, pageCount, Session):
     session.commit()
   session.close()
   return count, new, update
+
+def crawlArticleDetail(id, type):
+  params = { 'contentId': id, 'channelId': TYPE_TO_CHANNEL_ID[type] }
+  result = requests.get('http://www.acfun.cn/content_view.aspx', params=params).json();
+  return {
+    'viewNum': result[0],
+    'commentNum': result[1],
+    'bananaNum': result[6]
+  }
+
+
+def crawlDetailAndSave(pastDay):
+  session = Session()
+  articles = session.query(
+    Article.id,
+    Article.type,
+    Article.bananaNum,
+  ).filter(or_(
+    Article.bananaNum == None,
+    Article.publishedAt >= arrow.now().shift(days=-pastDay).format('YYYY-MM-DD')
+  )).all()
+  for article in articles:
+    detail = crawlArticleDetail(article.id, article.type)
+    session.query(Article).filter_by(id = article.id).update(detail)
+    session.commit()
+  session.close()
+  return len(articles)
+  
