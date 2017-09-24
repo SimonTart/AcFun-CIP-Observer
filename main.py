@@ -9,7 +9,7 @@ scheduler = BackgroundScheduler()
 
 
 # scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
-scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=1)
+scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=5)
 scheduler.add_job(updateArticleJob, name='updateArticleJob', trigger='cron', hour='1')
 scheduler.start()
 
