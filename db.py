@@ -7,3 +7,4 @@ connect_url = 'mysql+pymysql://{user}:{password}@{host}/{database}?charset=utf8'
 engine = create_engine(connect_url, encoding='utf8')
 
 Session = sessionmaker(bind=engine,autoflush=False)
+connection = engine.connect()

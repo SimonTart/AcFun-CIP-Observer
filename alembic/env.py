@@ -4,7 +4,7 @@ from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from db import connect_url
+from db import connect_url, Session
 from models import ModelBaseMetadata
 
 # this is the Alembic Config object, which provides

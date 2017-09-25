@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, text, DateTime, func
+from sqlalchemy import Column, Integer, String, text, DateTime, func, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -6,7 +6,7 @@ Base = declarative_base()
 
 class Article(Base):
   __tablename__ = 'articles'
-  id = Column(Integer, primary_key = True)
+  id = Column(Integer, primary_key = True, autoincrement = False)
   type = Column(String(255), nullable = False)
   title = Column(String(255), nullable = False)
   viewNum = Column('view_num', Integer, nullable = False)

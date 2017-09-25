@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from models.article import Article
+from models.user import User
 from db import Session
 from config import TYPE_TO_CHANNEL_ID
 from sqlalchemy import or_, update
@@ -46,6 +47,10 @@ def crawlAndSave(type, baseUrl, pageCount):
     for article in crawl(type, baseUrl, page):
       existArticle = session.query(Article).filter_by(id = article['id']).first()
       count += 1
+      user = session.query(User).filter_by(id = article['publishedBy']).first()
+      if user == None:
+        session.add(User(id=article['publishedBy']))
+        session.commit()
       if existArticle:
         session.query(Article).filter_by(id = article['id']).update(article)
         update += 1
