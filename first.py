@@ -5,4 +5,4 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 for section in ARTICLE_SECTIONS:
-    articleSpider.crawlAndSave(section['type'], section['url'], 800)
+    articleSpider.crawlAndSave(section['type'], section['url'], 100)
