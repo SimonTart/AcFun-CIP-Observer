@@ -50,7 +50,7 @@ def crawlAndSave(type, baseUrl, pageCount):
   new = 0
   update = 0
   for page in range(1, pageCount):
-    # time.sleep(10)
+    time.sleep(10)
     session = Session()
     for article in crawl(type, baseUrl, page):
       if article == None:
