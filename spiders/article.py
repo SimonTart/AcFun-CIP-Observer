@@ -21,7 +21,13 @@ def crawl(type, baseUrl, pageNum):
   articles = set()
   for articleTag in articleTags:
     titleTag = articleTag.find('a', class_="title")
-    id = re.search(r'/a/ac(\d+)$', titleTag['href'], flags=re.I).group(1)
+    idSearch = re.search(r'/a/ac(\d+)$', titleTag['href'], flags=re.I)
+    if idSearch:
+      id = idSearch.group(1)
+    else:
+      id = titleTag['href']
+      yield None
+      continue
     title = titleTag.string
     publishedAt = re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$', titleTag['title'], flags=re.I).group(0)
     hint = articleTag.find('a', class_="hint-comm-article")['title']
@@ -40,13 +46,15 @@ def crawl(type, baseUrl, pageNum):
 
 
 def crawlAndSave(type, baseUrl, pageCount):
-  session = Session()
   count = 0
   new = 0
   update = 0
   for page in range(1, pageCount):
-    time.sleep(10)
+    # time.sleep(10)
+    session = Session()
     for article in crawl(type, baseUrl, page):
+      if article == None:
+        continue
       existArticle = session.query(Article).filter_by(id = article['id']).first()
       count += 1
       user = session.query(User).filter_by(id = article['publishedBy']).first()
@@ -60,7 +68,7 @@ def crawlAndSave(type, baseUrl, pageCount):
         session.add(Article(**article))
         new += 1
     session.commit()
-  session.close()
+    session.close()
   return count, new, update
 
 def crawlArticleDetail(id, type):
@@ -74,7 +82,6 @@ def crawlArticleDetail(id, type):
 
 
 def crawlDetailAndSave(pastDay):
-  session = Session()
   articles = session.query(
     Article.id,
     Article.type,
@@ -85,9 +92,10 @@ def crawlDetailAndSave(pastDay):
   )).all()
   for article in articles:
     time.sleep(10)
+    session = Session()
     detail = crawlArticleDetail(article.id, article.type)
     session.query(Article).filter_by(id = article.id).update(detail)
     session.commit()
-  session.close()
+    session.close()
   return len(articles)
   
