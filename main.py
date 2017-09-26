@@ -11,7 +11,7 @@ scheduler = BackgroundScheduler()
 # scheduler.add_listener(my_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 # crawlNewArticleJob()
 # crawlArticleDetailJob()
-scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=5)
+scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=10)
 scheduler.add_job(crawlArticleDetailJob, name='crawlArticleDetailJob', trigger='cron', hour='2')
 scheduler.start()
 

@@ -1,5 +1,6 @@
 import requests
 import re
+import time
 from bs4 import BeautifulSoup
 from models.article import Article
 from models.user import User
@@ -44,6 +45,7 @@ def crawlAndSave(type, baseUrl, pageCount):
   new = 0
   update = 0
   for page in range(1, pageCount):
+    time.sleep(10)
     for article in crawl(type, baseUrl, page):
       existArticle = session.query(Article).filter_by(id = article['id']).first()
       count += 1
@@ -82,6 +84,7 @@ def crawlDetailAndSave(pastDay):
     Article.publishedAt >= arrow.now().shift(days=-pastDay).format('YYYY-MM-DD')
   )).all()
   for article in articles:
+    time.sleep(10)
     detail = crawlArticleDetail(article.id, article.type)
     session.query(Article).filter_by(id = article.id).update(detail)
     session.commit()
