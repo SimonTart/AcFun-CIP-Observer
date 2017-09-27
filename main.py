@@ -12,7 +12,7 @@ scheduler = BackgroundScheduler()
 # crawlNewArticleJob()
 # crawlArticleDetailJob()
 scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=10)
-scheduler.add_job(crawlArticleDetailJob, name='crawlArticleDetailJob', trigger='cron', hour='2')
+scheduler.add_job(crawlArticleDetailJob, name='crawlArticleDetailJob', trigger='cron', hour='10')
 scheduler.start()
 
 while True:

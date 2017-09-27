@@ -82,6 +82,7 @@ def crawlArticleDetail(id, type):
 
 
 def crawlDetailAndSave(pastDay):
+  session = Session()
   articles = session.query(
     Article.id,
     Article.type,
@@ -90,6 +91,7 @@ def crawlDetailAndSave(pastDay):
     Article.bananaNum == None,
     Article.publishedAt >= arrow.now().shift(days=-pastDay).format('YYYY-MM-DD')
   )).all()
+  session.close()
   for article in articles:
     time.sleep(10)
     session = Session()
