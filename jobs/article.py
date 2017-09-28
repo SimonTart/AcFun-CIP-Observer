@@ -33,5 +33,13 @@ def crawlArticleDetailJob(jobName, pastDay):
     'count': count,
   })
 
+def completeDetailAndSaveJob(jobName):
+  count = ArticleSpider.completeDetailAndSave()
+  logger = logging.getLogger(jobName)
+  logger.info('[Article]: crawl %(count)d articles detail', {
+    'count': count,
+  })
+
 crawlNewArticleJob = recordJobCoastTime(articleJob, 'crawlNewArticleJob', sections=ARTICLE_SECTIONS, pageCount=ARTICLE_CRAWL_PAGE_COUNT)
 crawlArticleDetailJob = recordJobCoastTime(crawlArticleDetailJob, 'crawlArticleDetailJob', pastDay=ARTICLE_CRAWL_DETAIL_PAST_DAY)
+completeDetailAndSaveJob = recordJobCoastTime(completeDetailAndSaveJob, 'completeDetailAndSaveJob')

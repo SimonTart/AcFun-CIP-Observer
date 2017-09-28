@@ -1,5 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
-from jobs.article import crawlNewArticleJob, crawlArticleDetailJob
+from jobs.article import crawlNewArticleJob, crawlArticleDetailJob, completeDetailAndSaveJob
 import time
 
 import logging
@@ -13,6 +13,7 @@ scheduler = BackgroundScheduler()
 # crawlArticleDetailJob()
 scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interval', minutes=10)
 scheduler.add_job(crawlArticleDetailJob, name='crawlArticleDetailJob', trigger='cron', hour='10')
+scheduler.add_job(completeDetailAndSaveJob, name='completeDetailAndSaveJob', trigger='interval', minutes=10)
 scheduler.start()
 
 while True:

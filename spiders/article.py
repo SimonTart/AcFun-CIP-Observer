@@ -87,13 +87,27 @@ def crawlDetailAndSave(pastDay):
     Article.id,
     Article.type,
     Article.bananaNum,
-  ).filter(or_(
-    Article.bananaNum == None,
-    Article.publishedAt >= arrow.now().shift(days=-pastDay).format('YYYY-MM-DD')
-  )).all()
+  ).filter(Article.publishedAt >= arrow.now().shift(days=-pastDay).format('YYYY-MM-DD')).all()
   session.close()
   for article in articles:
     time.sleep(10)
+    session = Session()
+    detail = crawlArticleDetail(article.id, article.type)
+    session.query(Article).filter_by(id = article.id).update(detail)
+    session.commit()
+    session.close()
+  return len(articles)
+
+def completeDetailAndSave():
+  session = Session()
+  articles = session.query(
+    Article.id,
+    Article.type,
+    Article.bananaNum,
+  ).filter(Article.bananaNum == None).limit(100).all()
+  session.close()
+  for article in articles:
+    time.sleep(3)
     session = Session()
     detail = crawlArticleDetail(article.id, article.type)
     session.query(Article).filter_by(id = article.id).update(detail)
