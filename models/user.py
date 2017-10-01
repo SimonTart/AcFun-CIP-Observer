@@ -19,6 +19,7 @@ class User(Base):
   followNum = Column('follow_num', Integer)
   gender = Column('gender', Boolean)
   registerAt = Column('register_at', DateTime)
+  disabled = Column('disabled', Boolean, server_default=text('FALSE'))
   updateAt = Column(
     'updated_at',
     DateTime,
