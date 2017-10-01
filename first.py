@@ -8,4 +8,5 @@ logging.basicConfig(level=logging.INFO)
 
 # crawlNewArticleJob()
 
-userJob.crwalBasicJob()
+# userJob.crwalBasicJob()
+userJob.crwalDetailJob()

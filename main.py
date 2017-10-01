@@ -16,6 +16,8 @@ scheduler.add_job(crawlNewArticleJob, name='crawlNewArticleJob', trigger='interv
 scheduler.add_job(crawlArticleDetailJob, name='crawlArticleDetailJob', trigger='cron', hour='10')
 scheduler.add_job(completeDetailAndSaveJob, name='completeDetailAndSaveJob', trigger='interval', minutes=10)
 scheduler.add_job(userJob.crwalBasicJob, name='userJob.crwalBasicJob', trigger='interval', minutes=10)
+scheduler.add_job(userJob.crwalDetailJob, name='userJob.crwalDetailJob', trigger='interval', minutes=10)
+
 scheduler.start()
 
 while True:
