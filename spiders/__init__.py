@@ -1,1 +1,1 @@
-__all__ = ['article']
+__all__ = ['article', 'comment']
