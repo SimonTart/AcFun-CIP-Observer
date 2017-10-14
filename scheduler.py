@@ -3,8 +3,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from jobs.article import crawlNewArticleJob, crawlArticleDetailJob, completeDetailAndSaveJob
 from jobs import user as userJob, comment as commentJob
 
-import logging
-logging.basicConfig(level=logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 scheduler = BackgroundScheduler()
 
 
@@ -27,8 +25,3 @@ scheduler.add_job(commentJob.crwalComment, name='commentJob.crwalComment', trigg
 scheduler.add_job(commentJob.crwalNewComment, name='commentJob.crwalNewComment', trigger='interval', minutes=20)
 scheduler.add_job(commentJob.crwalLatestComment, name='commentJob.crwalLatestComment', trigger='interval', hours=6)
 scheduler.add_job(commentJob.crwalPastComment, name='commentJob.crwalPastComment', trigger='interval', days=14)
-
-scheduler.start()
-
-while True:
-  time.sleep(2)
