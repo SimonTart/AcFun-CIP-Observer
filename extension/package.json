@@ -1,0 +1,23 @@
+{
+  "name": "eva_acfun",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "arrive": "^2.4.1",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.0.49",
+    "@types/jquery": "^3.2.13",
+    "copy-webpack-plugin": "^4.1.1",
+    "ts-loader": "^2.3.7",
+    "typescript": "^2.5.3",
+    "webpack": "^3.7.1"
+  },
+  "scripts": {
+    "dev": "webpack -w --config webpack.config.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
