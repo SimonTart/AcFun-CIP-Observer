@@ -6,14 +6,17 @@ function isArticle(): Boolean {
 }
 
 function addMagicButton():void {
-  $('.author-comment[data-uid="-1"]:not(input)').each((_, element) => {
-    $(element).prev().append($('<input data-magic type="button" value="施法">'))
+  $('.author-comment[data-uid="-1"]').each((_, element) => {
+    $(element)
+    .prev()
+    .filter((_, el) => $(el).find('input').length === 0)
+    .append($('<input data-magic type="button" value="施法">'))
   });
 }
 
 if (isArticle()) {
   const body:any = document.body;
-  body.arrive('.area-pager',{ onceOnly: true, existing: true}, () => {
+  body.arrive('.area-pager',{ existing: true}, () => {
     addMagicButton();
   });
   $('#area-bottom-view').delegate('input[data-magic]', 'click', function() {
