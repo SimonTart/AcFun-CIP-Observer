@@ -4,3 +4,4 @@ alembic_sample.sqlite
 .vscode
 **/__init__.pyc
 node_modules/
+app/dist
