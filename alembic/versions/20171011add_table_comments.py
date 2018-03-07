@@ -26,6 +26,7 @@ def upgrade():
     sa.Column('quoteId', sa.Integer(), nullable=True),
     sa.Column('is_delete', sa.Boolean(), nullable=False),
     sa.Column('is_up_delete', sa.Boolean(), nullable=False),
+    sa.Column('article_id', sa.Integer(), nullable=False)
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.PrimaryKeyConstraint('id')

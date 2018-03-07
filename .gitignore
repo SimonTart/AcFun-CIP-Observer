@@ -5,3 +5,5 @@ alembic_sample.sqlite
 **/__init__.pyc
 node_modules/
 extension/dist
+lib
+bin
