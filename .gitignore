@@ -7,3 +7,5 @@ node_modules/
 extension/dist
 lib
 bin
+pyvenv.cfg
+.pip
