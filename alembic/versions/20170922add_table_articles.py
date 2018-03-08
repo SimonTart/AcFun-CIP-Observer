@@ -29,7 +29,7 @@ def upgrade():
         sa.Column('published_at', sa.DateTime(), nullable=False),
         sa.Column('published_by', sa.Integer(), nullable=False),
         sa.Column('banana_num', sa.Integer(), nullable=True),
-        sa.Column('is_get_comments', sa.Boolean(), nullable=True),
+        sa.Column('is_get_comments', sa.Boolean(), nullable=True, server_default=sa.text('FALSE')),
         sa.Column('updated_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
         sa.Column('created_at', sa.DateTime(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
         sa.PrimaryKeyConstraint('id')

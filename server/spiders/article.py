@@ -48,8 +48,6 @@ def saveArticles(articles):
             session.add(Article(**article))
         session.commit()
     session.close()
-            
-        # if exist
 
 
 def startSpider(section):

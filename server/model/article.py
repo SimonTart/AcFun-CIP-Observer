@@ -16,7 +16,7 @@ class Article(Base):
   bananaNum = Column('banana_num', Integer)
   publishedAt = Column('published_at', DateTime, nullable = False)
   publishedBy = Column('published_by', Integer, nullable = False)
-  isGetComments = Column('is_get_comments', Boolean,server_default = text('FALSE'))
+  isGetComments = Column('is_get_comments', Boolean, server_default = text('FALSE'))
   updateAt = Column(
     'updated_at',
     DateTime,
