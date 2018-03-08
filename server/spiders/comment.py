@@ -68,13 +68,16 @@ def saveComments(comments):
     # 添加新的评论
     needAddCommentIds = commentIds - commentIdsInDB
     needAddComments = list(filter(lambda c: c['id'] in needAddCommentIds, comments))
-    session.add_all(list(needAddComments))
+    session.add_all([ Comment(**comment) for comment in needAddComments])
     session.commit()
 
     #更新旧的评论
     needUpdateComments = list(filter(lambda c: c['id'] in commentIdsInDB and (c['isDelete'] is True or c['isUpDelete'] is True), comments))
     for comment in needUpdateComments:
-        session.query(Comment).filter(Comment.id == comment.get('id')).update(comment)
+        session.query(Comment).filter(Comment.id == comment.get('id')).update({
+            'isDelete': c.get('isDelete'),
+            'isUpDelete': c.get('isUpDelete')
+        })
         session.commit()
 
     session.close()
