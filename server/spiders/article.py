@@ -33,10 +33,7 @@ def formatArticleToModle(article):
     }
 
 def formatArticles(articles):
-    newArticles = []
-    for article in articles:
-        newArticles.append(formatArticleToModle(article))
-    return newArticles
+    return [formatArticleToModle(article) for article in articles]
 
 def saveArticles(articles):
     session = Session()
@@ -50,8 +47,8 @@ def saveArticles(articles):
     session.close()
 
 
-def startSpider(section):
-    articleList = getArticlesByOrder(section.get('realmIds'), pageSize=20)
+def cralArticlesBySection(section):
+    articleList = getArticlesByOrder(section.get('realmIds'))
     articleList = formatArticles(articleList)
     saveArticles(articleList)
 

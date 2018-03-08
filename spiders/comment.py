@@ -65,11 +65,11 @@ def crawl(id, sleep = 1):
       commentContentArr = result.get('data').get('commentContentArr')
       userIds = set(map(lambda c: int(c.get('userID')) ,commentContentArr.values()))
       saveUserIds(userIds)
-      saveComments(commentContentArr.values(), id);
+      saveComments(commentContentArr.values(), id)
       time.sleep(sleep)
     except Exception as error:
       logging.error(error)
-  session = Session();
+  session = Session()
   session.query(Article).filter(Article.id == id).update({ 'crawlComments': True });
   session.commit()
   session.close()
