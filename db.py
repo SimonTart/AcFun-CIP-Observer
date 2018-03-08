@@ -6,5 +6,5 @@ from config import db
 connect_url = 'mysql+pymysql://{user}:{password}@{host}/{database}?charset=utf8'.format(**db);
 engine = create_engine(connect_url, encoding='utf8')
 
-Session = sessionmaker(bind=engine,autoflush=False)
+Session = sessionmaker(bind=engine)
 connection = engine.connect()
