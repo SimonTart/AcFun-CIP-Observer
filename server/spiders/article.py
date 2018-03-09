@@ -49,10 +49,9 @@ def saveArticles(articles):
     articleIdsInDB = { article.id for article in articlesInDB }
 
     needToSaveArticleIds = articleIds - articleIdsInDB
-    if needToSaveArticleIds > 0:
-        needToSabeArticles = list(filter(lambda a: a['id'] in needToSaveArticleIds, articles))
-        session.add_all([ Article(**article) for article in needToSabeArticles])
-        session.commit()
+    needToSabeArticles = list(filter(lambda a: a['id'] in needToSaveArticleIds, articles))
+    session.add_all([ Article(**article) for article in needToSabeArticles])
+    session.commit()
 
     session.close()
 
