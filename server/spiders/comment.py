@@ -88,3 +88,7 @@ def crawlCommentsByArticleId(articleId, crawlAll = False):
     comments = fromatComments(comments, articleId)
     saveComments(comments)
     
+def crawlLatestCoomentsByRealmId(realmId, day):
+    session = Session()
+    # articles = 
+    

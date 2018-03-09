@@ -1,9 +1,11 @@
 import requests
+import threading
+from time import time
 from .utils import formatTimestamp
 from ..model.article import Article
 from db import Session
 
-def getArticlesByOrder(realmIds, pageNumber = 1, pageSize = 200):
+def getOnePageArticles(realmIds, pageNumber = 1, pageSize = 200):
     params = {
         'pageNo': pageNumber,
         'size': pageSize,
@@ -12,10 +14,15 @@ def getArticlesByOrder(realmIds, pageNumber = 1, pageSize = 200):
         'orderType': 2,
         'periodType': -1,
         'filterTitleImage': 'true',
-        '1': 2
     }
     res = requests.get("http://webapi.aixifan.com/query/article/list", params=params)
     return res.json().get('data').get('articleList')
+
+def getArticles(realmIds, totalPage):
+    articleList = []
+    for pageNumber in range(1, totalPage + 1):
+        articleList.extend(getOnePageArticles(realmIds, pageNumber))
+    return articleList
 
 
 def formatArticleToModle(article):
@@ -37,20 +44,38 @@ def formatArticles(articles):
 
 def saveArticles(articles):
     session = Session()
-    for article in articles:
-        exist = session.query(Article).filter_by(id = article['id']).first()
-        if exist is not None:
-            session.query(Article).filter_by(id = article['id']).update(article)
-        else:
-            session.add(Article(**article))
-        session.commit()
+    articleIds = { article['id'] for article in articles }
+    articlesInDB = session.query(Article.id).filter(Article.id.in_(articleIds)).all()
+    articleIdsInDB = { article.id for article in articlesInDB }
+
+    needToSaveArticleIds = articleIds - articleIdsInDB
+    needToSabeArticles = list(filter(lambda a: a['id'] in needToSaveArticleIds, articles))
+    session.add_all([ Article(**article) for article in needToSabeArticles])
+    session.commit()
     session.close()
 
 
-def cralArticlesBySection(section):
-    articleList = getArticlesByOrder(section.get('realmIds'))
+def crawlArticlesBySection(section, totalPage = 1):
+    start  = time()
+
+    startGetTime = time()
+    articleList = getArticles(section.get('realmIds'), totalPage)
+    timeOfGetArticles = time() - startGetTime
+
+    startSaveTime = time()
     articleList = formatArticles(articleList)
     saveArticles(articleList)
+    timeOfSaveArticles = time() - startSaveTime
 
+    timeOfTotal = time() - start
+    print(
+        '抓取', section.get('type'), '区文章：',
+        '[一共花费', timeOfTotal, ' 秒]',
+        '[请求数据花费', timeOfGetArticles,'秒]',
+        '[处理并保存数据花费', timeOfSaveArticles,'秒]',
+        )
 
-        
+def crawlAllSectionsArticles(sections):
+    for section in sections:
+        t = threading.Thread(target = crawlArticlesBySection, args=(section,))
+        t.start()
