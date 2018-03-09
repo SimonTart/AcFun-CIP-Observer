@@ -2,7 +2,7 @@ import requests
 import threading
 from time import time
 from .utils import formatTimestamp
-from ..model.article import Article
+from ..models.article import Article
 from db import Session
 
 def getOnePageArticles(realmIds, pageNumber = 1, pageSize = 200):
@@ -49,33 +49,43 @@ def saveArticles(articles):
     articleIdsInDB = { article.id for article in articlesInDB }
 
     needToSaveArticleIds = articleIds - articleIdsInDB
-    needToSabeArticles = list(filter(lambda a: a['id'] in needToSaveArticleIds, articles))
-    session.add_all([ Article(**article) for article in needToSabeArticles])
-    session.commit()
+    if needToSaveArticleIds > 0:
+        needToSabeArticles = list(filter(lambda a: a['id'] in needToSaveArticleIds, articles))
+        session.add_all([ Article(**article) for article in needToSabeArticles])
+        session.commit()
+
     session.close()
 
 
 def crawlArticlesBySection(section, totalPage = 1):
     start  = time()
-
     startGetTime = time()
+
     articleList = getArticles(section.get('realmIds'), totalPage)
-    timeOfGetArticles = time() - startGetTime
+    timeOfGet = time() - startGetTime
 
     startSaveTime = time()
     articleList = formatArticles(articleList)
     saveArticles(articleList)
-    timeOfSaveArticles = time() - startSaveTime
+    timeOfSave = time() - startSaveTime
 
     timeOfTotal = time() - start
     print(
         '抓取', section.get('type'), '区文章：',
         '[一共花费', timeOfTotal, ' 秒]',
-        '[请求数据花费', timeOfGetArticles,'秒]',
-        '[处理并保存数据花费', timeOfSaveArticles,'秒]',
+        '[请求数据花费', timeOfGet,'秒]',
+        '[处理并保存数据花费', timeOfSave,'秒]',
         )
 
 def crawlAllSectionsArticles(sections):
+    threadList = []
+    start = time()
     for section in sections:
         t = threading.Thread(target = crawlArticlesBySection, args=(section,))
         t.start()
+        threadList.append(t)
+    
+    for t in threadList:
+        t.join()
+    print('此次抓取文章共使用：', time() - start, '秒')
+        

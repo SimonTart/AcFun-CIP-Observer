@@ -1,9 +1,12 @@
 import requests
+import threading
+import arrow
 from db import Session
-from models.comment import Comment
+from ..models.comment import Comment
+from ..models.article import Article
 from time import time
 
-def requestComments(articleId, pageNumber = 1, pageSize = 200):
+def requestComments(articleId, pageNumber = 1, pageSize = 50):
     params = {
         'isNeedAllCount': 'true',
         'isReaderOnlyUpUser': 'false',
@@ -67,28 +70,62 @@ def saveComments(comments):
 
     # 添加新的评论
     needAddCommentIds = commentIds - commentIdsInDB
-    needAddComments = list(filter(lambda c: c['id'] in needAddCommentIds, comments))
-    session.add_all([ Comment(**comment) for comment in needAddComments])
-    session.commit()
+    if len(needAddCommentIds) > 0:
+        needAddComments = list(filter(lambda c: c['id'] in needAddCommentIds, comments))
+        session.add_all([ Comment(**comment) for comment in needAddComments])
+        session.commit()
 
     #更新旧的评论
     needUpdateComments = list(filter(lambda c: c['id'] in commentIdsInDB and (c['isDelete'] is True or c['isUpDelete'] is True), comments))
     for comment in needUpdateComments:
         session.query(Comment).filter(Comment.id == comment.get('id')).update({
-            'isDelete': c.get('isDelete'),
-            'isUpDelete': c.get('isUpDelete')
+            'isDelete': comment.get('isDelete'),
+            'isUpDelete': comment.get('isUpDelete')
         })
         session.commit()
 
     session.close()
 
 
-def crawlCommentsByArticleId(articleId, crawlAll = False):
+def crawlCommentsByArticleId(articleId, crawlAll):
+    start  = time()
+    startGetTime = time()
+
     comments = getCommentsByOrder(articleId, crawlAll)
+    timeOfGet = time() - startGetTime
+
+    startSaveTime = time()
     comments = fromatComments(comments, articleId)
     saveComments(comments)
+    timeOfSave = time() - startSaveTime
+
+    timeOfTotal = time() - start
+    print(
+        '抓取文章：', articleId, '评论'
+        '[一共花费', timeOfTotal, ' 秒]',
+        '[请求数据花费', timeOfGet,'秒]',
+        '[处理并保存数据花费', timeOfSave,'秒]',
+        )
+
+def crawlCommentsByArticleIds(aricleIds, crawlAll):
+    for articleId in aricleIds:
+        crawlCommentsByArticleId(articleId, crawlAll)
     
-def crawlLatestCoomentsByRealmId(realmId, day):
+def crawlLatestComments(day, useThread = True, threadCrawlNum = 100, crawlAll = False):
+    start = time()
     session = Session()
-    # articles = 
+    articles = session.query(Article.id).filter(Article.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()
+    articleIds = [ c.id for c in articles ]
+    if useThread:
+        threadList = []
+        for i in range(0, len(articleIds) + 1, threadCrawlNum):
+            t = threading.Thread(target = crawlCommentsByArticleIds, args = (articleIds[i:i+threadCrawlNum], crawlAll))
+            t.start()
+            threadList.append(t)
+
+        for t in threadList:
+            t.join()
+    else:
+        crawlCommentsByArticleIds(articleIds, crawlAll)
+    print('此次一共抓取', len(articleIds), '篇文章评论，共使用：', time() - start, '秒')
     

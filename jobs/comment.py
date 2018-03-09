@@ -30,7 +30,7 @@ def crwalLatestComment():
     commentSpider.crawl(article.id)
 
 # 过去14天的文章
-def crwalPastComment():
+def crwalPastComment(beginTime, endTime):
   session = Session()
   articles = session.query(Article.id).filter(Article.publishedAt >= arrow.now().shift(days=-14).format('YYYY-MM-DD')).all()
   session.close()
