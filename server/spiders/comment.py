@@ -48,7 +48,7 @@ def formatCommentToModel(comment, articleId):
     return {
         'id': comment.get('cid'),
         'content': comment.get('content'),
-        'userId': comment.get('userId'),
+        'userId': comment.get('userID'),
         'postDate': comment.get('postDate'),
         'quoteId': comment.get('quoteId'),
         'isDelete': comment.get('isDelete'),
