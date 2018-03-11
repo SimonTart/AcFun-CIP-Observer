@@ -20,6 +20,17 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
         res = requests.get("http://webapi.aixifan.com/query/article/list", params=params)
         return res.json().get('data').get('articleList')
 
+    if sectionType == contentTypes['video']:
+        params = {
+            'pageNo': pageNumber,
+            'size': 20, # 文章默认20，传其他值也是无效的
+            'channelId': section.get('channelId'),
+            'sort': 0,
+        }
+        res = requests.get("http://www.acfun.cn/list/getlist", params=params)
+        return res.json().get('data').get('data')
+
+
 def getContents(section, sectionType, totalPage):
     contentList = []
     for pageNumber in range(1, totalPage + 1):
@@ -27,7 +38,7 @@ def getContents(section, sectionType, totalPage):
     return contentList
 
 
-def formatContentToModle(content, sectionType):
+def formatContentToModle(content, section, sectionType):
     if sectionType == contentTypes['article']:
         return {
             'id': content.get('id'),
@@ -40,11 +51,26 @@ def formatContentToModle(content, sectionType):
             'publishedAt': formatTimestamp(content.get('contribute_time')),
             'publishedBy': content.get('user_id'),
             'bananaNum': content.get('banana_count'),
-            'contentType': sectionType
+            'contentType': sectionType,
+            'channelId': section['channelId']
+        }
+    
+    if sectionType == contentTypes['video']:
+        return {
+            'id': content.get('id'),
+            'type': section.get('name'),
+            'title': content.get('title'),
+            'viewNum': content.get('viewCount'),
+            'commentNum': content.get('commentCount'),
+            'publishedAt': content.get('contributeTimeFormat'),
+            'publishedBy': content.get('userId'),
+            'bananaNum': content.get('bananaCount'),
+            'contentType': sectionType,
+            'channelId': section['channelId']
         }
 
-def formatContents(contents, sectionType):
-    return [formatContentToModle(content, sectionType) for content in contents]
+def formatContents(contents, section, sectionType):
+    return [formatContentToModle(content, section, sectionType) for content in contents]
 
 def saveContents(contents):
     session = Session()
@@ -68,7 +94,7 @@ def crawlContentsBySection(section, sectionType, totalPage = 1):
     timeOfGet = time() - startGetTime
 
     startSaveTime = time()
-    contentList = formatContents(contentList, sectionType)
+    contentList = formatContents(contentList, section, sectionType)
     saveContents(contentList)
     timeOfSave = time() - startSaveTime
 
@@ -91,4 +117,25 @@ def crawlAllSectionsArticles(sections):
     for t in threadList:
         t.join()
     print('此次抓取文章共使用：', time() - start, '秒')
+
+
+def crawlAllSectionsVideos(sections):
+    totalPage = 5
+    threadList = []
+    start = time()
+    for section in sections:
+        if 'subSections' not in section:
+            t = threading.Thread(target = crawlContentsBySection, args=(section, contentTypes['video'], totalPage))
+            t.start()
+            threadList.append(t)
+        else:
+            subSections = section['subSections']
+            for subSection in subSections:
+                t = threading.Thread(target = crawlContentsBySection, args=(subSection, contentTypes['video'], totalPage))
+                t.start()
+                threadList.append(t)
+    
+    for t in threadList:
+        t.join()
+    print('此次抓取视频共使用：', time() - start, '秒')
         
