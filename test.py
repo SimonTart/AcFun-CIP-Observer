@@ -11,5 +11,5 @@ from config import ARTICLE_SECTIONS
 # start = time()
 # print('cost', time() - start)
 
-contentSpider.crawlAllSectionsContents(ARTICLE_SECTIONS)
+contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS)
 # commentSpider.crawlLatestComments(1, useThread=False, crawlAll=True)

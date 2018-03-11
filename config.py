@@ -1,30 +1,30 @@
 import os
 
-content_types = {
+contentTypes = {
   'article': 'article',
   'video': 'video'
 }
 
 ARTICLE_SECTIONS = ({
-  'type': '综合',
+  'name': '综合',
   'channelId': 110,
   'realmIds': '5,1,2,4',
 },{
-  'type': '工作·情感',
+  'name': '工作·情感',
   'channelId': 73,
   'realmIds': '6,7',
 },{
-  'type': '动漫文化',
+  'name': '动漫文化',
   'channelId': 74,
   'realmIds': '13,14',
 },
 {
-  'type': '漫画·轻小说',
+  'name': '漫画·轻小说',
   'channelId': 75,
   'realmIds': '15,16',
 },
 {
-  'type': '游戏',
+  'name': '游戏',
   'channelId': 164,
   'realmIds': '8,10,11,9,12',
 })
