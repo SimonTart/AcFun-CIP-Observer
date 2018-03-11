@@ -3,7 +3,7 @@ import logging
 import time
 
 from db import Session
-from models.article import Article
+from models.content import Content
 from models.user import User
 from models.comment import Comment
 
@@ -28,7 +28,7 @@ def saveUserIds(userIds):
   session.commit()
   session.close()
 
-def saveComments(comments, articleId):
+def saveComments(comments, contentId):
   commentIds = list(map(lambda c: int(c.get('cid')), list(comments)))
   session = Session()
   existCommentIds = [c.id for c in session.query(Comment.id).filter(Comment.id.in_(commentIds)).all()]
@@ -49,7 +49,7 @@ def saveComments(comments, articleId):
       quoteId=int(c.get('quoteId')),
       isDelete=c.get('isDelete'),
       isUpDelete=c.get('isUpDelete'),
-      articleId=articleId
+      contentId=contentId
     ),
     [c for c in comments if c.get('cid') in newCommentId]
   )
@@ -70,6 +70,6 @@ def crawl(id, sleep = 1):
     except Exception as error:
       logging.error(error)
   session = Session()
-  session.query(Article).filter(Article.id == id).update({ 'crawlComments': True });
+  session.query(Content).filter(Content.id == id).update({ 'crawlComments': True })
   session.commit()
   session.close()

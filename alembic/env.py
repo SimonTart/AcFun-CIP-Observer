@@ -5,6 +5,7 @@ from logging.config import fileConfig
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from db import connect_url, Session
+from server.models import target_metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -39,8 +40,7 @@ def run_migrations_offline():
 
     """
     url = connect_url
-    context.configure(
-        url=url, literal_binds=True) #target_metadata=target_metadata,
+    context.configure(url=url, literal_binds=True, target_metadata=target_metadata) #
 
     with context.begin_transaction():
         context.run_migrations()
@@ -60,8 +60,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection
-            #target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata
         )
 
         with context.begin_transaction():

@@ -3,15 +3,15 @@ import threading
 import arrow
 from db import Session
 from ..models.comment import Comment
-from ..models.article import Article
+from ..models.content import Content
 from time import time
 
-def requestComments(articleId, pageNumber = 1, pageSize = 50):
+def requestComments(contentId, pageNumber = 1, pageSize = 50):
     params = {
         'isNeedAllCount': 'true',
         'isReaderOnlyUpUser': 'false',
         'isAscOrder': 'false',
-        'contentId': articleId,
+        'contentId': contentId,
         'currentPage': pageNumber,
         'pageSize': pageSize,
     }
@@ -26,25 +26,25 @@ def getCommentListFromRes(res):
         commentList.append(commentContentArr.get('c%d' % commentId))
     return commentList
 
-def getCommentsByOrder(articleId, crawlAll):
+def getCommentsByOrder(contentId, crawlAll):
     """根据文章ID抓取评论
     Args:
-        articleId: 文章ID
+        contentId: 文章ID
         crawlAll: 是否抓取此文章的所有评论, 如果是False, 那么只抓取前200个
 
     Returns: commentList
     """
-    res = requestComments(articleId)
+    res = requestComments(contentId)
     totalPage = res.json().get('data').get('totalPage')
     commentList = getCommentListFromRes(res)
     if crawlAll is True:
         for pageNumber in range(1, int(totalPage)):
-            newComments = getCommentListFromRes(requestComments(articleId, pageNumber + 1))
+            newComments = getCommentListFromRes(requestComments(contentId, pageNumber + 1))
             commentList.extend(newComments)
     return commentList
     
 
-def formatCommentToModel(comment, articleId):
+def formatCommentToModel(comment, contentId):
     return {
         'id': comment.get('cid'),
         'content': comment.get('content'),
@@ -53,11 +53,11 @@ def formatCommentToModel(comment, articleId):
         'quoteId': comment.get('quoteId'),
         'isDelete': comment.get('isDelete'),
         'isUpDelete': comment.get('isUpDelete'),
-        'articleId': articleId,
+        'contentId': contentId,
     }
 
-def fromatComments(comments, articleId):
-    return [formatCommentToModel(comment, articleId) for comment in comments]
+def fromatComments(comments, contentId):
+    return [formatCommentToModel(comment, contentId) for comment in comments]
 
 def saveComments(comments):
     session = Session()
@@ -86,45 +86,45 @@ def saveComments(comments):
     session.close()
 
 
-def crawlCommentsByArticleId(articleId, crawlAll):
+def crawlCommentsByContentId(contentId, crawlAll):
     start  = time()
     startGetTime = time()
 
-    comments = getCommentsByOrder(articleId, crawlAll)
+    comments = getCommentsByOrder(contentId, crawlAll)
     timeOfGet = time() - startGetTime
 
     startSaveTime = time()
-    comments = fromatComments(comments, articleId)
+    comments = fromatComments(comments, contentId)
     saveComments(comments)
     timeOfSave = time() - startSaveTime
 
     timeOfTotal = time() - start
     print(
-        '抓取文章：', articleId, '评论'
+        '抓取文章：', contentId, '评论'
         '[一共花费', timeOfTotal, ' 秒]',
         '[请求数据花费', timeOfGet,'秒]',
         '[处理并保存数据花费', timeOfSave,'秒]',
         )
 
-def crawlCommentsByArticleIds(aricleIds, crawlAll):
-    for articleId in aricleIds:
-        crawlCommentsByArticleId(articleId, crawlAll)
+def crawlCommentsByContentIds(contentIds, crawlAll):
+    for contentId in contentIds:
+        crawlCommentsByContentId(contentId, crawlAll)
     
 def crawlLatestComments(day, useThread = True, threadCrawlNum = 100, crawlAll = False):
     start = time()
     session = Session()
-    articles = session.query(Article.id).filter(Article.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()
-    articleIds = [ c.id for c in articles ]
+    contents = session.query(Content.id).filter(Content.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()
+    contentIds = [ c.id for c in contents ]
     if useThread:
         threadList = []
-        for i in range(0, len(articleIds) + 1, threadCrawlNum):
-            t = threading.Thread(target = crawlCommentsByArticleIds, args = (articleIds[i:i+threadCrawlNum], crawlAll))
+        for i in range(0, len(contentIds) + 1, threadCrawlNum):
+            t = threading.Thread(target = crawlCommentsByContentIds, args = (contentIds[i:i+threadCrawlNum], crawlAll))
             t.start()
             threadList.append(t)
 
         for t in threadList:
             t.join()
     else:
-        crawlCommentsByArticleIds(articleIds, crawlAll)
-    print('此次一共抓取', len(articleIds), '篇文章评论，共使用：', time() - start, '秒')
+        crawlCommentsByContentIds(contentIds, crawlAll)
+    print('此次一共抓取', len(contentIds), '篇文章评论，共使用：', time() - start, '秒')
     
