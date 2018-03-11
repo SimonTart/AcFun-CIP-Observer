@@ -27,10 +27,10 @@ def getCommentListFromRes(res):
     return commentList
 
 def getCommentsByOrder(contentId, crawlAll):
-    """根据文章ID抓取评论
+    """根据content ID抓取评论
     Args:
-        contentId: 文章ID
-        crawlAll: 是否抓取此文章的所有评论, 如果是False, 那么只抓取前200个
+        contentId: content ID
+        crawlAll: 是否抓取此内容的所有评论, 如果是False, 那么只抓取前200个
 
     Returns: commentList
     """
@@ -100,7 +100,7 @@ def crawlCommentsByContentId(contentId, crawlAll):
 
     timeOfTotal = time() - start
     print(
-        '抓取文章：', contentId, '评论'
+        '抓取内容：', contentId, '评论'
         '[一共花费', timeOfTotal, ' 秒]',
         '[请求数据花费', timeOfGet,'秒]',
         '[处理并保存数据花费', timeOfSave,'秒]',
@@ -126,5 +126,5 @@ def crawlLatestComments(day, useThread = True, threadCrawlNum = 100, crawlAll = 
             t.join()
     else:
         crawlCommentsByContentIds(contentIds, crawlAll)
-    print('此次一共抓取', len(contentIds), '篇文章评论，共使用：', time() - start, '秒')
+    print('此次一共抓取', len(contentIds), '个内容的评论，共使用：', time() - start, '秒')
     
