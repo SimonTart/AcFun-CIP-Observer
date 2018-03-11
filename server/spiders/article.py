@@ -5,7 +5,7 @@ from .utils import formatTimestamp
 from ..models.article import Article
 from db import Session
 
-def getOnePageArticles(realmIds, pageNumber = 1, pageSize = 200):
+def getOnePageArticles(realmIds, pageNumber = 1, pageSize = 20):
     params = {
         'pageNo': pageNumber,
         'size': pageSize,
