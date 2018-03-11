@@ -1,5 +1,10 @@
 import os
 
+content_types = {
+  'article': 'article',
+  'video': 'video'
+}
+
 ARTICLE_SECTIONS = ({
   'type': '综合',
   'channelId': 110,

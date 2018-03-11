@@ -8,6 +8,7 @@ class Content(Base):
   __tablename__ = 'contents'
   id = Column(Integer, primary_key = True, autoincrement = False)
   type = Column(String(255), nullable = False)
+  contentType = Column('content_type', String(255), nullable = False)
   channelId = Column('channel_id', Integer)
   realmId = Column('realm_id', Integer)
   realmName = Column('realm_name', String(255))
