@@ -24,8 +24,7 @@ if (hasComments()) {
         $(this).val('施法中...')
         $.ajax({
             method: 'get',
-            // url: '//acfun.trisolaries.com/comment',
-            url: '//127.0.0.1:8000/comment',
+            url: '//mcfun.trisolaries.com/comment',
             dataType: 'json',
             data: { id },
         })
