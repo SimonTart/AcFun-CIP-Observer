@@ -5,9 +5,9 @@ from time import time
 from server import server
 from config import ARTICLE_SECTIONS, VIDEO_SECTIONS
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 #   scheduler.start()
-#   server.run(host='127.0.0.1', port=8000)
+  server.run(host='127.0.0.1', port=8000)
 # start = time()
 # print('cost', time() - start)
 

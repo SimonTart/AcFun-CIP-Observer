@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
-# from .comment import comment_page
+
+from .apis.comment import commentApis
 
 server = Flask(__name__)
 CORS(server)
-# server.register_blueprint(comment_page)
+server.register_blueprint(commentApis)

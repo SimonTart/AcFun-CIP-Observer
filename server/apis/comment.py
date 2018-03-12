@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
-from models.comment import Comment
+from ..models.comment import Comment
 from db import Session
 
-comment_page = Blueprint('comment_page', __name__)
+commentApis = Blueprint('comment', __name__)
 
 def is_int(str):
   try:
@@ -14,7 +14,7 @@ def is_int(str):
 
 
 
-@comment_page.route('/comment', methods=['GET'])
+@commentApis.route('/comment', methods=['GET'])
 @cross_origin()
 def comment():
   id = request.args.get('id')
