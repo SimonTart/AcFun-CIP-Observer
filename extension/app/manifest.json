@@ -10,7 +10,7 @@
     "128": "icon.png"
   },
   "content_scripts": [{
-    "matches": ["*://www.acfun.cn/a/*"],
+    "matches": ["*://www.acfun.cn/a/*","*://www.acfun.cn/v/*"],
     "js": ["./content_script.js"]
   }],
   "permissions": []

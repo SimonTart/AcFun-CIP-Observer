@@ -1,35 +1,42 @@
 import * as $ from 'jquery';
 import 'arrive'
 
-function isArticle(): Boolean {
-  return $('#area-title-view').length > 0;
+function hasComments(): Boolean {
+    return $('.comment-area').length > 0;
 }
 
-function addMagicButton():void {
-  $('.author-comment[data-uid="-1"]').each((_, element) => {
-    $(element)
-    .prev()
-    .filter((_, el) => $(el).find('input').length === 0)
-    .append($('<input data-magic type="button" value="施法">'))
-  });
+function addMagicButton(): void {
+    $('.author-comment[data-uid="-1"]').each((_, element) => {
+        $(element)
+            .prev()
+            .filter((_, el) => $(el).find('input').length === 0)
+            .append($('<input data-magic type="button" value="施法">'))
+    });
 }
 
-if (isArticle()) {
-  const body:any = document.body;
-  body.arrive('.area-pager',{ existing: true}, () => {
-    addMagicButton();
-  });
-  $('#area-bottom-view').delegate('input[data-magic]', 'click', function() {
-    const id = $(this).closest('.item-comment').attr('id').replace(/c-/i, '');
-    $(this).val('施法中...')
-    $.ajax({
-      method: 'get',
-      url: '//acfun.trisolaries.com/comment',
-      // url: '//127.0.0.1:8000/comment',
-      dataType: 'json',
-      data: { id },
-    })
-    .then((res) => { $(this).closest('.content-comment').html(res.content) })
-    .catch(() => { $(this).val('施法失败') })
-  });
+if (hasComments()) {
+    const body: any = document.body;
+    body.arrive('.item-comment', { existing: true, onceOnly: true }, () => {
+        addMagicButton();
+    });
+    $('.comment-area').delegate('input[data-magic]', 'click', function () {
+        const id = $(this).closest('.item-comment').attr('id').replace(/c-/i, '');
+        $(this).val('施法中...')
+        $.ajax({
+            method: 'get',
+            // url: '//acfun.trisolaries.com/comment',
+            url: '//127.0.0.1:8000/comment',
+            dataType: 'json',
+            data: { id },
+        })
+            .then((res) => {
+                if ($(this).closest('.content-comment').length > 0) {
+                    $(this).closest('.content-comment').html(res.content);
+                } else {
+                    $(this).prev('.content-comment').html(res.content);
+                }
+                $(this).remove();
+            })
+            .catch(() => { $(this).val('施法失败') })
+    });
 }
