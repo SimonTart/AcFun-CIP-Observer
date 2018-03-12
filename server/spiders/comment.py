@@ -73,7 +73,6 @@ def saveComments(comments):
 
     #更新旧的评论
     needUpdateComments = list(filter(lambda c: c['id'] in commentIdsInDB and (c['isDelete'] is True or c['isUpDelete'] is True), comments))
-    print(len(needUpdateComments))
     for comment in needUpdateComments:
         session.query(Comment).filter(Comment.id == comment.get('id')).update({
             'isDelete': comment.get('isDelete'),
