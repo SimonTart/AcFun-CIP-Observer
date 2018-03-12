@@ -17,14 +17,10 @@ def requestComments(contentId, pageNumber = 1, pageSize = 50):
     }
     return requests.get('http://www.acfun.cn/comment_list_json.aspx', params=params)
 
-def getCommentListFromRes(res):
+def getCommentDictFromRes(res):
     data = res.json().get('data')
     commentIdList = data.get('commentList')
-    commentContentArr = data.get('commentContentArr')
-    commentList = []
-    for commentId in commentIdList:
-        commentList.append(commentContentArr.get('c%d' % commentId))
-    return commentList
+    return data.get('commentContentArr')
 
 def getCommentsByOrder(contentId, crawlAll):
     """根据content ID抓取评论
@@ -36,12 +32,13 @@ def getCommentsByOrder(contentId, crawlAll):
     """
     res = requestComments(contentId)
     totalPage = res.json().get('data').get('totalPage')
-    commentList = getCommentListFromRes(res)
+    commentDict = getCommentDictFromRes(res)
     if crawlAll is True:
         for pageNumber in range(1, int(totalPage)):
-            newComments = getCommentListFromRes(requestComments(contentId, pageNumber + 1))
-            commentList.extend(newComments)
-    return commentList
+            newCommentDict = getCommentDictFromRes(requestComments(contentId, pageNumber + 1))
+            commentDict.update(newCommentDict)
+
+    return commentDict.values()
     
 
 def formatCommentToModel(comment, contentId):
@@ -76,6 +73,7 @@ def saveComments(comments):
 
     #更新旧的评论
     needUpdateComments = list(filter(lambda c: c['id'] in commentIdsInDB and (c['isDelete'] is True or c['isUpDelete'] is True), comments))
+    print(len(needUpdateComments))
     for comment in needUpdateComments:
         session.query(Comment).filter(Comment.id == comment.get('id')).update({
             'isDelete': comment.get('isDelete'),
