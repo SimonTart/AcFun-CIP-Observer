@@ -1,0 +1,79 @@
+html,body {
+    height: 100vh;
+    width: 100vw;
+}
+
+body {
+    margin: 0;
+    font-family: "Open Sans",arial,x-locale-body,sans-serif;
+    overflow: hidden;
+    position: relative;
+    text-align: center
+}
+
+.video {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+video {
+    flex: 0 0 auto;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slogan {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 100px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.download-button, .tech-button {
+    display: inline-block;
+    height: 45px;
+    line-height: 45px;
+    width: 156px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.download-button:hover, .tech-button:hover {
+    border: 1px solid rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, .45);
+    color: rgba(255, 255, 255, 1);
+}
+
+.tech-button {
+    margin-left: 35px;
+}
+
+.contact {
+    position: absolute;
+    font-size: 12px;
+    color: #fff;
+    bottom: 5px;
+    left: 0;
+    right: 25px;
+    text-align: right;
+}
