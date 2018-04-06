@@ -5,6 +5,7 @@
   "main": "webpack.config.js",
   "dependencies": {
     "arrive": "^2.4.1",
+    "compare-versions": "^3.1.0",
     "jquery": "^3.2.1"
   },
   "devDependencies": {

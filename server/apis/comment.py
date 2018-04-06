@@ -25,6 +25,29 @@ def comment():
   comments = session.query(Comment.content).filter(Comment.id==int(id)).all()
   session.close()
   if len(comments) == 1:
-    return jsonify({ 'content': comments[0].content }), 200
+    return jsonify({ 'content': comments[0].content + '<br/><a href="http://acfun.trisolaries.com:7070/" target="_blank" style="color: blue;">请点击链接到官网升级插件</a>' }), 200
+  else:
+    return '', 404
+
+
+updateTip = """<div data-id="upgrade-tip" style="display: flex; align-items: center; margin-top: 15px;">
+<a href="http://acfun.trisolaries.com:7070/" target="_blank" style="color: blue;">请点击链接到官网升级插件</a><span data-id="not-show-update-tip" style="cursor: pointer;">&nbsp;&nbsp;永不提示（包括以后的版本）</span></div>"""
+@commentApis.route('/v2/comment', methods=['GET'])
+@cross_origin()
+def commentV2():
+  id = request.args.get('id')
+  if not is_int(id):
+    return '', 400
+  
+  session = Session()
+  comments = session.query(Comment.content, Comment.userId).filter(Comment.id==int(id)).all()
+  session.close()
+  if len(comments) == 1:
+    return jsonify({
+        'content': comments[0].content,
+        'userId': comments[0].userId,
+        'needUpdateVersion': '1.0',
+        'updateTip': updateTip
+      }), 200
   else:
     return '', 404
