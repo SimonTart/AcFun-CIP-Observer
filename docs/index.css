@@ -36,10 +36,12 @@ body {
 
 .video {
     flex: 0 0 auto;
-    background: rgba(0, 0, 0, 0.75)
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
 }
 
 .video video {
+    flex: 0 0 auto;
     opacity: 0.75;
 }
 
