@@ -1,28 +1,46 @@
 html,body {
-    height: 100vh;
-    width: 100vw;
+    overflow: hidden;
+    background: url('./acfun.png');
+    background-size: auto 100%;
 }
 
 body {
     margin: 0;
     font-family: "Open Sans",arial,x-locale-body,sans-serif;
-    overflow: hidden;
-    position: relative;
-    text-align: center
 }
 
-.video {
-    width: 100%;
+.layer {
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.container {
+    max-width: 1320px;
+    margin: 0 auto;
     height: 100%;
     display: flex;
+    overflow: hidden;
     align-items: center;
+}
+
+.desc-block {
+    flex: 1 1 auto;
+}
+
+.video-block {
+    flex: 1 1 auto;
+    display: flex;
     justify-content: center;
 }
 
-video {
+.video {
     flex: 0 0 auto;
-    width: 100%;
-    min-height: 100%;
+    background: rgba(0, 0, 0, 0.75)
+}
+
+.video video {
+    opacity: 0.75;
 }
 
 .content {
@@ -39,29 +57,34 @@ video {
 }
 
 .slogan {
-    font-size: 24px;
+    font-size: 32px;
+    line-height: 1.7;
     text-align: center;
     margin-bottom: 100px;
-    color: rgba(255, 255, 255, 0.75);
+    color: #fd4c5b;
+    font-weight: bold;
+    margin: 0;
+}
+.buttons {
+    text-align: center;
+    margin-top: 45px;
 }
 
 .download-button, .tech-button {
     display: inline-block;
     height: 45px;
     line-height: 45px;
-    width: 156px;
+    width: 175px;
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    background: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     font-size: 16px;
+    border: 1px solid #fd4c5b;
+    color: #fd4c5b;
 }
 
 .download-button:hover, .tech-button:hover {
-    border: 1px solid rgba(255, 255, 255, 1);
-    background: rgba(255, 255, 255, .45);
-    color: rgba(255, 255, 255, 1);
+    border: 1px solid #fff;
+    color: #fff;
 }
 
 .tech-button {

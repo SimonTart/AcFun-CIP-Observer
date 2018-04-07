@@ -58,8 +58,8 @@ if (hasComments()) {
         $(this).val('施法中...')
         $.ajax({
             method: 'get',
-            // url: '//mcfun.trisolaries.com/comment',
-            url: '//localhost:8000/v2/comment',
+            url: '//mcfun.trisolaries.com/v2/comment',
+            // url: '//localhost:8000/v2/comment',
             dataType: 'json',
             data: { id },
         })
