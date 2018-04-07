@@ -13,6 +13,7 @@ body {
     height: 100vh;
     width: 100vw;
     background: rgba(0, 0, 0, 0.45);
+    position: relative;
 }
 
 .container {
@@ -101,4 +102,12 @@ body {
     left: 0;
     right: 25px;
     text-align: right;
+}
+
+.author {
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
