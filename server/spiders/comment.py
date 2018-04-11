@@ -5,6 +5,7 @@ from db import Session
 from ..models.comment import Comment
 from ..models.content import Content
 from time import time
+from sentry import ravenClient
 
 def requestComments(contentId, pageNumber = 1, pageSize = 50):
     params = {
@@ -84,24 +85,27 @@ def saveComments(comments):
 
 
 def crawlCommentsByContentId(contentId, crawlAll):
-    start  = time()
-    startGetTime = time()
+    try:
+        start  = time()
+        startGetTime = time()
 
-    comments = getCommentsByOrder(contentId, crawlAll)
-    timeOfGet = time() - startGetTime
+        comments = getCommentsByOrder(contentId, crawlAll)
+        timeOfGet = time() - startGetTime
 
-    startSaveTime = time()
-    comments = fromatComments(comments, contentId)
-    saveComments(comments)
-    timeOfSave = time() - startSaveTime
+        startSaveTime = time()
+        comments = fromatComments(comments, contentId)
+        saveComments(comments)
+        timeOfSave = time() - startSaveTime
 
-    timeOfTotal = time() - start
-    # print(
-    #     '抓取内容：', contentId, '评论'
-    #     '[一共花费', timeOfTotal, ' 秒]',
-    #     '[请求数据花费', timeOfGet,'秒]',
-    #     '[处理并保存数据花费', timeOfSave,'秒]',
-    #     )
+        timeOfTotal = time() - start
+        # print(
+        #     '抓取内容：', contentId, '评论'
+        #     '[一共花费', timeOfTotal, ' 秒]',
+        #     '[请求数据花费', timeOfGet,'秒]',
+        #     '[处理并保存数据花费', timeOfSave,'秒]',
+        #     )
+    except: 
+        ravenClient.captureException()
 
 def crawlCommentsByContentIds(contentIds, crawlAll):
     for contentId in contentIds:

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
 from ..models.comment import Comment
 from db import Session
+from sentry import ravenClient
 
 commentApis = Blueprint('comment', __name__)
 
@@ -27,6 +28,7 @@ def comment():
   if len(comments) == 1:
     return jsonify({ 'content': comments[0].content + '<br/><a href="http://acfun.trisolaries.com:7070/" target="_blank" style="color: blue;">请点击链接到官网升级插件</a>' }), 200
   else:
+    ravenClient.captureMessage('Comment Not Fount, id = ' + id)
     return '', 404
 
 
@@ -50,4 +52,5 @@ def commentV2():
         'updateTip': updateTip
       }), 200
   else:
+    ravenClient.captureMessage('Comment Not Fount, id = ' + id)
     return '', 404

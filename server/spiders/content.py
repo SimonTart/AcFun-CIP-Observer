@@ -1,3 +1,4 @@
+import logging
 import requests
 import threading
 from time import time
@@ -5,6 +6,7 @@ from .utils import formatTimestamp
 from ..models.content import Content
 from db import Session
 from config import contentTypes
+from sentry import ravenClient
 
 def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
     if sectionType == contentTypes['article']:
@@ -87,40 +89,42 @@ def saveContents(contents):
 
 
 def crawlContentsBySection(section, sectionType, totalPage = 1):
-    start  = time()
-    startGetTime = time()
+    try:
+        start  = time()
+        startGetTime = time()
 
-    contentList = getContents(section, sectionType, totalPage)
-    timeOfGet = time() - startGetTime
+        contentList = getContents(section, sectionType, totalPage)
+        timeOfGet = time() - startGetTime
 
-    startSaveTime = time()
-    contentList = formatContents(contentList, section, sectionType)
-    saveContents(contentList)
-    timeOfSave = time() - startSaveTime
+        startSaveTime = time()
+        contentList = formatContents(contentList, section, sectionType)
+        saveContents(contentList)
+        timeOfSave = time() - startSaveTime
 
-    timeOfTotal = time() - start
-    print(
-        '抓取[', section.get('name'), ']分区内容',
-        '[一共花费', timeOfTotal, ' 秒]',
-        '[请求数据花费', timeOfGet,'秒]',
-        '[处理并保存数据花费', timeOfSave,'秒]',
-        )
+        timeOfTotal = time() - start
+        logging.info(
+            '抓取[' + section.get('name') + ']分区内容' +
+            '[一共花费' + str(timeOfTotal) + ' 秒]' +
+            '[请求数据花费' + str(timeOfGet) +'秒]' +
+            '[处理并保存数据花费' + str(timeOfSave) +'秒]'
+            )
+    except:
+        ravenClient.captureException()
 
-def crawlAllSectionsArticles(sections):
+def crawlAllSectionsArticles(sections, totalPage = 1):
     threadList = []
     start = time()
     for section in sections:
-        t = threading.Thread(target = crawlContentsBySection, args=(section, contentTypes['article']))
+        t = threading.Thread(target = crawlContentsBySection, args=(section, contentTypes['article'], totalPage))
         t.start()
         threadList.append(t)
     
     for t in threadList:
         t.join()
-    print('此次抓取文章共使用：', time() - start, '秒')
+    logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
 
 
-def crawlAllSectionsVideos(sections):
-    totalPage = 5
+def crawlAllSectionsVideos(sections, totalPage = 5):
     threadList = []
     start = time()
     for section in sections:
@@ -137,5 +141,5 @@ def crawlAllSectionsVideos(sections):
     
     for t in threadList:
         t.join()
-    print('此次抓取视频共使用：', time() - start, '秒')
+    logging.info('此次抓取视频共使用：' + str(time() - start) + '秒')
         
