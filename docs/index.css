@@ -141,7 +141,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     color: #fff;
     border: 1px solid #000;
     display: none;
