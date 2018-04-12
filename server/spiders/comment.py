@@ -1,3 +1,4 @@
+import logging
 import requests
 import threading
 import arrow
@@ -127,5 +128,5 @@ def crawlLatestComments(day, useThread = True, threadCrawlNum = 100, crawlAll = 
             t.join()
     else:
         crawlCommentsByContentIds(contentIds, crawlAll)
-    print('此次一共抓取', len(contentIds), '个内容的评论，共使用：', time() - start, '秒')
+    logging.info('此次一共抓取' + str(len(contentIds)) + '个内容的评论，共使用：' + str(time() - start) + '秒')
     
