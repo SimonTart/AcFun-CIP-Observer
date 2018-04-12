@@ -25,6 +25,28 @@ body {
     align-items: center;
 }
 
+.topbar {
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 2;
+}
+
+.topbar > div {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.topbar > div:hover {
+    border-bottom: 1px solid #fff;
+}
+
+.public-notice {
+    margin-left: 15px;
+}
+
 .desc-block {
     flex: 1 1 auto;
 }
@@ -110,4 +132,77 @@ body {
     position: absolute;
     bottom: 10px;
     right: 10px;
+}
+
+.alert {
+    max-width: 750px;
+    min-width:645px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    border: 1px solid #000;
+    display: none;
+}
+
+.alert.active {
+    display: initial;
+}
+
+.alert-header {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #fff; 
+    display: flex;
+}
+
+.alert-title {
+    flex: 1 1 0;
+    padding-left: 25px;
+}
+
+.alert-close {
+    font-size: 24px;
+    padding: 0 15px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.alert-body {
+    max-height: 350px;
+    padding: 25px 25px;
+    overflow: auto;
+}
+
+.alert-body p {
+    margin: 0;
+    line-height: 1.75;
+}
+
+.content-item {
+    margin-bottom: 35px;
+}
+
+.content-item:last-child {
+    margin-bottom: 0;
+}
+
+.alert-body .content-item-header {
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.alert-body .content-item-header-time {
+    width: 100px;
+}
+
+.alert-body .content-item-content{
+    margin-top: 5px;
+    padding-left: 100px;
+    font-size: 14px;
 }

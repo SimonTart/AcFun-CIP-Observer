@@ -9,6 +9,10 @@
 </head>
 <body>
     <div class="layer">
+        <div class="topbar">
+            <div class="upgrade-log">更新日志</div><!--
+            --><div class="public-notice">公告</div>
+        </div>
         <div class="container">
             <div class="desc-block">
                 <p class="slogan">
@@ -29,6 +33,69 @@
         </div>
         <div class="author">Created By Trisolar,Email: zengxb94@foxmail.com</div>
     </div>
+    <div class="alert upgrade-log-alert">
+        <div class="alert-header">
+            <div class="alert-title">更新日志</div>
+            <dic class="alert-close">x</dic>
+        </div>
+        <div class="alert-body">
+            <div class="content-item">
+                <div class="content-item-header">
+                    <div class="content-item-header-time">2018-04-12</div>
+                    <div class="content-item-header-title">官网更新</div>
+                </div>
+                <div class="content-item-content">
+                    1. 官网添加日志和公告
+                </div>
+            </div>
+            <div class="content-item">
+                <div class="content-item-header">
+                    <div class="content-item-header-time">2018-04-07</div>
+                    <div class="content-item-header-title">插件V2.0.0发布和官网改版</div>
+                </div>
+                <div class="content-item-content">
+                    1. 插件恢复评论的同时恢复评论者信息<br/>
+                    2. 插件添加版本更新提示的功能<br/>
+                    3. 官网设计更新<br/>
+                </div>
+            </div>
+            <div class="content-item">
+                <div class="content-item-header">
+                    <div class="content-item-header-time">2018-03-10</div>
+                    <div class="content-item-header-title">插件发布V1.0.0和上线官网</div>
+                </div>
+                <div class="content-item-content">
+                    1. 第一版发布，只能回复评论
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert public-notice-alert">
+        <div class="alert-header">
+            <div class="alert-title">公告</div>
+            <dic class="alert-close">x</dic>
+        </div>
+        <div class="alert-body">
+            <div class="content-item">
+                <div class="content-item-header">
+                    <div class="content-item-header-time">2018-04-11</div>
+                    <div class="content-item-header-title">Bug公告</div>
+                </div>
+                <div class="content-item-content">
+                   因系统bug导致2018-04-09到2018-04-11期间的文章区评论无法恢复。
+                </div>
+            </div>
+            <div class="content-item">
+                    <div class="content-item-header">
+                        <div class="content-item-header-time">2018-03-10</div>
+                        <div class="content-item-header-title">特别注意</div>
+                    </div>
+                    <div class="content-item-content">
+                       本插件无法恢复2018-03-10之前的评论。
+                    </div>
+                </div>
+        </div>
+    </div>
     <script>
         var _hmt = _hmt || [];
         (function() {
@@ -37,6 +104,7 @@
             var s = document.getElementsByTagName("script")[0]; 
             s.parentNode.insertBefore(hm, s);
         })();
-    </script>
+        </script>
+        <script src="./index.js"></script>
 </body>
 </html>
