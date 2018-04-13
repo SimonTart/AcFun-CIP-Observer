@@ -311,36 +311,6 @@ VIDEO_SECTIONS = [
                 "channelId": 132
             }
         ]
-    },
-    {
-        "name": "文章",
-        "channelId": 63,
-        "subSections": [
-            {
-                "name": "游记·涂鸦",
-                "channelId": 184
-            },
-            {
-                "name": "综合",
-                "channelId": 110
-            },
-            {
-                "name": "工作·情感",
-                "channelId": 73
-            },
-            {
-                "name": "动漫文化",
-                "channelId": 74
-            },
-            {
-                "name": "漫画·文学",
-                "channelId": 75
-            },
-            {
-                "name": "游戏",
-                "channelId": 164
-            }
-        ]
     }
 ]
 

@@ -20,7 +20,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'filterTitleImage': 'true',
         }
         res = requests.get("http://webapi.aixifan.com/query/article/list", params=params)
-        return res.json().get('data').get('articleList')
+        if res.status_code == requests.codes.ok:
+            return res.json().get('data').get('articleList')
+        else:
+            ravenClient.captureMessage('Article Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+            return []
 
     if sectionType == contentTypes['video']:
         params = {
@@ -30,7 +34,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'sort': 0,
         }
         res = requests.get("http://www.acfun.cn/list/getlist", params=params)
-        return res.json().get('data').get('data')
+        if res.status_code == requests.codes.ok:
+            return res.json().get('data').get('data')
+        else:
+            ravenClient.captureMessage('Video Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+            return []
 
 
 def getContents(section, sectionType, totalPage):

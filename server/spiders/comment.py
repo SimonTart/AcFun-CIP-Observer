@@ -33,8 +33,14 @@ def getCommentsByOrder(contentId, crawlAll):
     Returns: commentList
     """
     res = requestComments(contentId)
-    totalPage = res.json().get('data').get('totalPage')
-    commentDict = getCommentDictFromRes(res)
+    if res.status_code == requests.codes.ok:
+        totalPage = res.json().get('data').get('totalPage')
+        commentDict = getCommentDictFromRes(res)
+    else:
+        ravenClient.captureMessage('Comment Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+        totalPage = 1
+        commentDict = {}
+
     if crawlAll is True:
         for pageNumber in range(1, int(totalPage)):
             newCommentDict = getCommentDictFromRes(requestComments(contentId, pageNumber + 1))
