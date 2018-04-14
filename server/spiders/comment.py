@@ -34,13 +34,13 @@ def getCommentsByOrder(contentId, crawlAll):
     Returns: commentList
     """
     res = requestComments(contentId)
-    if res.status_code == 200:
-        totalPage = res.json().get('data').get('totalPage')
-        commentDict = getCommentDictFromRes(res)
-    else:
+    if res.status_code != 200:
         ravenClient.captureMessage('Comment Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
         totalPage = 1
         commentDict = {}
+    else:
+        totalPage = res.json().get('data').get('totalPage')
+        commentDict = getCommentDictFromRes(res)
 
     if crawlAll is True:
         for pageNumber in range(1, int(totalPage)):
@@ -93,27 +93,24 @@ def saveComments(comments):
 
 
 def crawlCommentsByContentId(contentId, crawlAll):
-    try:
-        start  = time()
-        startGetTime = time()
+    start  = time()
+    startGetTime = time()
 
-        comments = getCommentsByOrder(contentId, crawlAll)
-        timeOfGet = time() - startGetTime
+    comments = getCommentsByOrder(contentId, crawlAll)
+    timeOfGet = time() - startGetTime
 
-        startSaveTime = time()
-        comments = fromatComments(comments, contentId)
-        saveComments(comments)
-        timeOfSave = time() - startSaveTime
+    startSaveTime = time()
+    comments = fromatComments(comments, contentId)
+    saveComments(comments)
+    timeOfSave = time() - startSaveTime
 
-        timeOfTotal = time() - start
-        # print(
-        #     '抓取内容：', contentId, '评论'
-        #     '[一共花费', timeOfTotal, ' 秒]',
-        #     '[请求数据花费', timeOfGet,'秒]',
-        #     '[处理并保存数据花费', timeOfSave,'秒]',
-        #     )
-    except Exception:
-        ravenClient.captureException()
+    timeOfTotal = time() - start
+    # print(
+    #     '抓取内容：', contentId, '评论'
+    #     '[一共花费', timeOfTotal, ' 秒]',
+    #     '[请求数据花费', timeOfGet,'秒]',
+    #     '[处理并保存数据花费', timeOfSave,'秒]',
+    #     )
 
 def crawlCommentsByContentIds(contentIds, crawlAll):
     for contentId in contentIds:

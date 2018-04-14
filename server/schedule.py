@@ -1,7 +1,9 @@
+import apscheduler
 from apscheduler.schedulers.background import BackgroundScheduler
 from config import ARTICLE_SECTIONS as articleSections, VIDEO_SECTIONS as videoSections
 import server.spiders.content as contentSpider
 import server.spiders.comment as commentSpider
+from sentry import ravenClient
 
 scheduler = BackgroundScheduler()
 
@@ -17,3 +19,7 @@ scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取三�
 ## 最近一周的评论 每晚抓取一次评论
 scheduler.add_job(commentSpider.crawlLatestComments, kwargs= { 'day': 7, 'useThread': False, 'crawlAll': True}, name='抓取一周内文章评论', trigger='cron', hour=5, minute=30)
 
+def errorListener(event):
+    ravenClient.capture(event.exception)
+
+scheduler.add_listener(errorListener, mask = apscheduler.events.EVENT_JOB_ERROR)

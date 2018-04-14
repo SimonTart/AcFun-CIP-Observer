@@ -1,4 +1,5 @@
 import logging
+import traceback
 import server.spiders.content as contentSpider
 import server.spiders.comment as commentSpider
 from server.schedule import scheduler
@@ -18,6 +19,6 @@ logging.basicConfig(
 # print('cost', time() - start)
 
 contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS)
-# contentSpider.crawlAllSectionsVideos(VIDEO_SECTIONS)
-# commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
-# commentSpider.crawlCommentsByContentId(4259705, True)
+contentSpider.crawlAllSectionsVideos(VIDEO_SECTIONS)
+commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
+commentSpider.crawlCommentsByContentId(4259705, True)

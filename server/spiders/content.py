@@ -22,16 +22,6 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'filterTitleImage': 'true',
         }
         res = proxy.get("http://webapi.aixifan.com/query/article/list", params=params)
-        if res.status_code == 200:
-            try:
-                return res.json().get('data').get('articleList')
-            except:
-                ravenClient.capture('Article JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
-                return []
-        else:
-            logging.error('Article Request Error')
-            ravenClient.captureMessage('Article Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
-            return []
 
     if sectionType == contentTypes['video']:
         params = {
@@ -41,15 +31,23 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'sort': 0,
         }
         res = requests.get("http://www.acfun.cn/list/getlist", params=params)
-        if res.status_code == 200:
-            try:
-                res.json().get('data').get('data')
-            except:
-                ravenClient.capture('Video JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
-                return []
-        else:
-            ravenClient.captureMessage('Video Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+
+    # 统一处理res
+    if res.status_code != 200:
+        ravenClient.captureMessage(sectionType + ' Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+        return []
+    else:
+        try:
+            json = res.json()
+        except:
+            ravenClient.capture(sectionType + ' JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
             return []
+    
+    # return正常值
+    if sectionType == contentTypes['article']:
+        return json.get('data').get('articleList')
+    if sectionType == contentTypes['video']:
+        return json.get('data').get('data')
 
 
 def getContents(section, sectionType, totalPage):
@@ -108,28 +106,25 @@ def saveContents(contents):
 
 
 def crawlContentsBySection(section, sectionType, totalPage = 1):
-    try:
-        start  = time()
-        startGetTime = time()
+    start  = time()
+    startGetTime = time()
 
-        contentList = getContents(section, sectionType, totalPage)
-        timeOfGet = time() - startGetTime
+    contentList = getContents(section, sectionType, totalPage)
+    timeOfGet = time() - startGetTime
 
-        startSaveTime = time()
-        contentList = formatContents(contentList, section, sectionType)
-        saveContents(contentList)
-        timeOfSave = time() - startSaveTime
+    startSaveTime = time()
+    contentList = formatContents(contentList, section, sectionType)
+    saveContents(contentList)
+    timeOfSave = time() - startSaveTime
 
-        timeOfTotal = time() - start
-        logging.info(
-            '抓取' + sectionType + '[' + section.get('name') + ']分区内容' +
-            '[一共抓取' + str(len(contentList)) + '个内容]' +
-            '[一共花费' + str(timeOfTotal) + ' 秒]' +
-            '[请求数据花费' + str(timeOfGet) +'秒]' +
-            '[处理并保存数据花费' + str(timeOfSave) + '秒]'
-        )
-    except:
-        ravenClient.captureException()
+    timeOfTotal = time() - start
+    logging.info(
+        '抓取' + sectionType + '[' + section.get('name') + ']分区内容' +
+        '[一共抓取' + str(len(contentList)) + '个内容]' +
+        '[一共花费' + str(timeOfTotal) + ' 秒]' +
+        '[请求数据花费' + str(timeOfGet) +'秒]' +
+        '[处理并保存数据花费' + str(timeOfSave) + '秒]'
+    )
 
 def crawlAllSectionsArticles(sections, totalPage = 1):
     threadList = []
