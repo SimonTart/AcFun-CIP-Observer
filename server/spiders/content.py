@@ -23,7 +23,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
         }
         res = proxy.get("http://webapi.aixifan.com/query/article/list", params=params)
         if res.status_code == 200:
-            return res.json().get('data').get('articleList')
+            try:
+                return res.json().get('data').get('articleList')
+            except:
+                ravenClient.capture('Article JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+                return []
         else:
             logging.error('Article Request Error')
             ravenClient.captureMessage('Article Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
@@ -38,7 +42,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
         }
         res = requests.get("http://www.acfun.cn/list/getlist", params=params)
         if res.status_code == 200:
-            return res.json().get('data').get('data')
+            try:
+                res.json().get('data').get('data')
+            except:
+                ravenClient.capture('Video JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
+                return []
         else:
             ravenClient.captureMessage('Video Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
             return []

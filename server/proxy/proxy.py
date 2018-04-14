@@ -25,9 +25,9 @@ def request(method, url, **kwargs):
             if res.status_code == 200 or res.status_code == 304 or res.status_code == 503:
                 return res
         except:
-            logging.error('Request Error: {}'.format(sys.exc_info()[0]))
-            # logging.error('IP {} Not Availble'.format(proxy))
+            logging.error('IP {} Not Availble'.format(proxy))
             deleteProxy(proxy)
+            
 
     logging.error('Proxy Not Availble', extra = getProxyStatus())
     logging.info('Proxy Not Availble, Using Local Network')
