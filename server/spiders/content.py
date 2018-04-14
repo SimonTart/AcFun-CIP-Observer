@@ -1,5 +1,7 @@
 import logging
+import sys
 import requests
+from ..proxy import proxy
 import threading
 from time import time
 from .utils import formatTimestamp
@@ -19,10 +21,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'periodType': -1,
             'filterTitleImage': 'true',
         }
-        res = requests.get("http://webapi.aixifan.com/query/article/list", params=params)
-        if res.status_code == requests.codes.ok:
+        res = proxy.get("http://webapi.aixifan.com/query/article/list", params=params)
+        if res.status_code == 200:
             return res.json().get('data').get('articleList')
         else:
+            logging.error('Article Request Error')
             ravenClient.captureMessage('Article Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
             return []
 
@@ -34,7 +37,7 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'sort': 0,
         }
         res = requests.get("http://www.acfun.cn/list/getlist", params=params)
-        if res.status_code == requests.codes.ok:
+        if res.status_code == 200:
             return res.json().get('data').get('data')
         else:
             ravenClient.captureMessage('Video Request Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
@@ -111,11 +114,12 @@ def crawlContentsBySection(section, sectionType, totalPage = 1):
 
         timeOfTotal = time() - start
         logging.info(
-            '抓取[' + section.get('name') + ']分区内容' +
+            '抓取' + sectionType + '[' + section.get('name') + ']分区内容' +
+            '[一共抓取' + str(len(contentList)) + '个内容]' +
             '[一共花费' + str(timeOfTotal) + ' 秒]' +
             '[请求数据花费' + str(timeOfGet) +'秒]' +
-            '[处理并保存数据花费' + str(timeOfSave) +'秒]'
-            )
+            '[处理并保存数据花费' + str(timeOfSave) + '秒]'
+        )
     except:
         ravenClient.captureException()
 

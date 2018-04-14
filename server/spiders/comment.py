@@ -1,4 +1,5 @@
 import logging
+import sys
 import requests
 import threading
 import arrow
@@ -33,7 +34,7 @@ def getCommentsByOrder(contentId, crawlAll):
     Returns: commentList
     """
     res = requestComments(contentId)
-    if res.status_code == requests.codes.ok:
+    if res.status_code == 200:
         totalPage = res.json().get('data').get('totalPage')
         commentDict = getCommentDictFromRes(res)
     else:
@@ -111,7 +112,7 @@ def crawlCommentsByContentId(contentId, crawlAll):
         #     '[请求数据花费', timeOfGet,'秒]',
         #     '[处理并保存数据花费', timeOfSave,'秒]',
         #     )
-    except: 
+    except Exception:
         ravenClient.captureException()
 
 def crawlCommentsByContentIds(contentIds, crawlAll):
