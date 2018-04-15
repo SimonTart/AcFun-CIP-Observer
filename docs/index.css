@@ -37,14 +37,11 @@ body {
 .topbar > div {
     display: inline-block;
     cursor: pointer;
+    margin-left: 15px;
 }
 
 .topbar > div:hover {
     border-bottom: 1px solid #fff;
-}
-
-.public-notice {
-    margin-left: 15px;
 }
 
 .desc-block {

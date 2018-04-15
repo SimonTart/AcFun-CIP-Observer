@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>掏出来吓死你</title>
-    <link href="./index.css?v=2.0.3" rel="stylesheet" type="text/css">
+    <link href="./index.css?v=2.0.4" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div class="layer">
         <div class="topbar">
             <div class="upgrade-log">更新日志</div><!--
-            --><div class="public-notice">公告</div>
+            --><div class="public-notice">公告</div><!--
+            --><div class="contact-author">Bug报告和意见反馈</div>
         </div>
         <div class="container">
             <div class="desc-block">
@@ -21,8 +22,8 @@
                     一个恢复被删除的评论的插件
                 </p>
                 <div class="buttons">
-                    <a href="./acfun-v2.0.0.zip" class="download-button" download>下载</a>
-                    <a href="https://www.evernote.com/l/AXwJ7UOE0-VDvo-3h_4xTw3DD2pxYeK-wME" class="tech-button" target="_blank">安装教程</a>
+                    <a href="./acfun-v2.0.0.crx" class="download-button" download>下载</a>
+                    <a href="http://www.williamlong.info/archives/3160.html" class="tech-button" target="_blank">安装教程</a>
                 </div>
             </div>
             <div class="video-block">
@@ -39,6 +40,16 @@
             <dic class="alert-close">x</dic>
         </div>
         <div class="alert-body">
+            <div class="content-item">
+                <div class="content-item-header">
+                    <div class="content-item-header-time">2018-04-15</div>
+                    <div class="content-item-header-title">后台和插件升级</div>
+                </div>
+                <div class="content-item-content">
+                    1. 恢复的评论可以看到正常的表情
+                    2. 插件通过crx格式发布，方便安装
+                </div>
+            </div>
             <div class="content-item">
                 <div class="content-item-header">
                     <div class="content-item-header-time">2018-04-12</div>
@@ -102,9 +113,21 @@
                     <div class="content-item-content">
                        本插件无法恢复2018-03-10之前的评论。
                     </div>
-                </div>
+            </div>
         </div>
     </div>
+    <div class="alert contact-author-alert">
+        <div class="alert-header">
+            <div class="alert-title">Bug和意见反馈</div>
+            <dic class="alert-close">x</dic>
+        </div>
+        <div class="alert-body">
+            <div class="content-item">
+                <div class="content-item-content">
+                    Bug建议（Bug请详细描写插件版本号，重现步骤）或对插件有好的建议，请发邮件到zengxb94@foxmail.com。
+                </div>
+            </div>
+        </div>
     <script>
         var _hmt = _hmt || [];
         (function() {
@@ -114,6 +137,6 @@
             s.parentNode.insertBefore(hm, s);
         })();
         </script>
-        <script src="./index.js?v2.0.3"></script>
+        <script src="./index.js?v2.0.4"></script>
 </body>
 </html>

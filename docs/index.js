@@ -17,6 +17,7 @@
 
     intialAlert('upgrade-log');
     intialAlert('public-notice');
+    intialAlert('contact-author');
 
     document.querySelectorAll('.alert .alert-close').forEach(function(close) {
         close.addEventListener('click', function() {
