@@ -1,6 +1,6 @@
 import logging
 import sys
-import requests
+from ..proxy import proxy
 import threading
 import arrow
 from db import Session
@@ -18,7 +18,7 @@ def requestComments(contentId, pageNumber = 1, pageSize = 50):
         'currentPage': pageNumber,
         'pageSize': pageSize,
     }
-    return requests.get('http://www.acfun.cn/comment_list_json.aspx', params=params)
+    return proxy.get('http://www.acfun.cn/comment_list_json.aspx', params=params)
 
 def getCommentDictFromRes(res):
     data = res.json().get('data')
@@ -116,7 +116,7 @@ def crawlCommentsByContentIds(contentIds, crawlAll):
     for contentId in contentIds:
         crawlCommentsByContentId(contentId, crawlAll)
     
-def crawlLatestComments(day, useThread = True, threadCrawlNum = 100, crawlAll = False):
+def crawlLatestComments(day, useThread = True, threadCrawlNum = 200, crawlAll = False):
     start = time()
     session = Session()
     contents = session.query(Content.id).filter(Content.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()

@@ -15,18 +15,25 @@ def getProxyStatus():
 
 
 def request(method, url, **kwargs):
-    requestCount = 5
     proxyCount = 20
     proxy = getProxy()
     while proxyCount > 0:
         proxy = getProxy()
-        try:
-            res = requests.request(method, url, timeout = 30, proxies={'http': 'http://{}'.format(proxy)}, **kwargs)
-            if res.status_code == 200 or res.status_code == 304 or res.status_code == 503:
-                return res
-        except:
-            logging.error('IP {} Not Availble'.format(proxy))
-            deleteProxy(proxy)
+        requestCount = 5
+        while requestCount > 0:
+            hasException = False
+            try:
+                res = requests.request(method, url, timeout = 10, proxies={'http': 'http://{}'.format(proxy)}, **kwargs)
+                res.json()
+                if res.status_code == 200:
+                    return res
+                else:
+                    requestCount -= 1
+            except:
+                requestCount -= 1
+        logging.error('IP {} Not Availble'.format(proxy))
+        proxyCount -= 1
+        deleteProxy(proxy)
             
 
     logging.error('Proxy Not Availble', extra = getProxyStatus())

@@ -18,7 +18,7 @@ logging.basicConfig(
 # start = time()
 # print('cost', time() - start)
 
-contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS)
+# contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS)
 contentSpider.crawlAllSectionsVideos(VIDEO_SECTIONS)
 commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
-commentSpider.crawlCommentsByContentId(4259705, True)
+# commentSpider.crawlCommentsByContentId(4259705, True)

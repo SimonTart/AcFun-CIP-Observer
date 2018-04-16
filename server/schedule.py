@@ -14,7 +14,7 @@ scheduler.add_job(contentSpider.crawlAllSectionsArticles, args= [articleSections
 scheduler.add_job(contentSpider.crawlAllSectionsVideos, args= [videoSections], name='抓取最新视频', trigger='interval', minutes=10)
 
 ## 最近三天的文章的评论，每分钟抓取一次最近的50条
-scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取三天内最新评论', trigger='interval', minutes=3)
+scheduler.add_job(commentSpider.crawlLatestComments, args= [1], name='抓取一天内最新评论', trigger='interval', minutes=10)
 
 ## 最近一周的评论 每晚抓取一次评论
 scheduler.add_job(commentSpider.crawlLatestComments, kwargs= { 'day': 7, 'useThread': False, 'crawlAll': True}, name='抓取一周内文章评论', trigger='cron', hour=5, minute=30)

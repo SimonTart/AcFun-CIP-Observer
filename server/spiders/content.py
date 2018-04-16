@@ -1,6 +1,5 @@
 import logging
 import sys
-import requests
 from ..proxy import proxy
 import threading
 from time import time
@@ -30,7 +29,7 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'channelId': section.get('channelId'),
             'sort': 0,
         }
-        res = requests.get("http://www.acfun.cn/list/getlist", params=params)
+        res = proxy.get("http://www.acfun.cn/list/getlist", params=params)
 
     # 统一处理res
     if res.status_code != 200:
