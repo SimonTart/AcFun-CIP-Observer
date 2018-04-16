@@ -105,18 +105,18 @@ def crawlCommentsByContentId(contentId, crawlAll):
     timeOfSave = time() - startSaveTime
 
     timeOfTotal = time() - start
-    # print(
-    #     '抓取内容：', contentId, '评论'
-    #     '[一共花费', timeOfTotal, ' 秒]',
-    #     '[请求数据花费', timeOfGet,'秒]',
-    #     '[处理并保存数据花费', timeOfSave,'秒]',
-    #     )
+    # logging.info(
+    #     '抓取内容：' + str(contentId) + '评论' +
+    #     '[一共花费' + str(timeOfTotal) + ' 秒]' +
+    #     '[请求数据花费' + str(timeOfGet) +'秒]' +
+    #     '[处理并保存数据花费' + str(timeOfSave) +'秒]'
+    # )
 
 def crawlCommentsByContentIds(contentIds, crawlAll):
     for contentId in contentIds:
         crawlCommentsByContentId(contentId, crawlAll)
     
-def crawlLatestComments(day, useThread = True, threadCrawlNum = 200, crawlAll = False):
+def crawlLatestComments(day, useThread = True, threadCrawlNum = 10, crawlAll = False):
     start = time()
     session = Session()
     contents = session.query(Content.id).filter(Content.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()

@@ -19,7 +19,7 @@ def request(method, url, **kwargs):
     proxy = getProxy()
     while proxyCount > 0:
         proxy = getProxy()
-        requestCount = 5
+        requestCount = 3
         while requestCount > 0:
             hasException = False
             try:
@@ -31,7 +31,7 @@ def request(method, url, **kwargs):
                     requestCount -= 1
             except:
                 requestCount -= 1
-        logging.error('IP {} Not Availble'.format(proxy))
+        # logging.error('IP {} Not Availble'.format(proxy))
         proxyCount -= 1
         deleteProxy(proxy)
             
