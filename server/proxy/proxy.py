@@ -4,14 +4,14 @@ import logging
 from sentry import ravenClient
 
 def getProxy():
-    proxy = requests.get('http://127.0.0.1:5010/get/').text
+    proxy = requests.get('http://127.0.0.1:5010/get').text
     return proxy
 
 def deleteProxy(proxy):
-    requests.get('http://127.0.0.1:5010/delete/?proxy={}'.format(proxy))
+    requests.get('http://127.0.0.1:5010/delete?proxy={}'.format(proxy))
 
 def getProxyStatus():
-    return requests.get('http://127.0.0.1:5010/get_status/').content
+    return requests.get('http://127.0.0.1:5010/get_status').content
 
 
 def request(method, url, **kwargs):
