@@ -29,8 +29,7 @@ def comment():
     if len(comments) == 1:
         return jsonify({ 'content': comments[0].content + '<br/><a href="http://acfun.trisolaries.com:7070/" target="_blank" style="color: blue;">请点击链接到官网升级插件</a>' }), 200
     else:
-        ravenClient.captureMessage('Comment Not Fount, id = ' + id)
-    return '', 404
+        return '', 404
 
 
 updateTip = """<div data-id="upgrade-tip" style="display: flex; align-items: center; margin-top: 15px;">
@@ -53,5 +52,4 @@ def commentV2():
             'updateTip': updateTip
         }), 200
     else:
-        ravenClient.captureMessage('Comment Not Fount, id = ' + id)
         return '', 404

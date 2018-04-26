@@ -39,11 +39,9 @@ if (hasComments()) {
     const body: any = document.body;
     body.arrive('.item-comment', { existing: true, onceOnly: true }, () => {
         setTimeout(() => {
-            console.log('>>>>>')
             const $pageNumberInput = $('.ipt-pager-old');
             const currentPageNumber =  $('.ipt-pager-old').length > 0 ?  Number($('.ipt-pager-old').val()) : 1;
             if (pageNumber !== currentPageNumber) {
-                console.log('>>>>????')
                 pageNumber = currentPageNumber;
                 addMagicButton();
                 coverUser();
