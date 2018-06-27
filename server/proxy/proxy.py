@@ -25,7 +25,7 @@ def request(method, url, **kwargs):
             try:
                 res = requests.request(method, url, timeout = 10, proxies={'http': 'http://{}'.format(proxy)}, **kwargs)
                 res.json()
-                if res.status_code == 200:
+                if res.status_code == 200 and res.json() is not None:
                     return res
                 else:
                     requestCount -= 1
