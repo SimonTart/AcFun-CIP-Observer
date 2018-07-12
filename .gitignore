@@ -12,3 +12,4 @@ pyvenv.cfg
 .pip-selfcheck.json
 .DS_Store
 ENV
+lib64

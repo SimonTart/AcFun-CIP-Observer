@@ -36,7 +36,7 @@ def request(method, url, **kwargs):
                 requestCount -= 1
         # logging.error('IP {} Not Availble'.format(proxy))
         proxyCount -= 1
-        deleteProxy(proxy)
+        # deleteProxy(proxy)
             
 
     logging.error('Proxy Not Availble', extra = getProxyStatus())
