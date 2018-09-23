@@ -39,7 +39,7 @@ def request(method, url, **kwargs):
         # deleteProxy(proxy)
             
 
-    logging.error('Proxy Not Availble', extra = getProxyStatus())
+    logging.error('Proxy Not Availble')
     logging.info('Proxy Not Availble, Using Local Network')
     ravenClient.captureMessage('Proxy Not Availble, Using Local Network')
     return requests.request(method, url, **kwargs)
