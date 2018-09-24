@@ -28,7 +28,6 @@ def request(method, url, **kwargs):
                 res = requests.request(method, url, timeout = 5, proxies={'http': 'http://{}'.format(proxy)}, **kwargs)
                 data = res.json().get('data')
                 if res.status_code == 200 and data is not None:
-                    logging.info(msg = res.text)
                     return res
                 else:
                     logging.error('proxy response not right:')
