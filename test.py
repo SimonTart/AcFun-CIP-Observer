@@ -20,5 +20,5 @@ logging.basicConfig(
 
 contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS, totalPage = 10)
 # contentSpider.crawlAllSectionsVideos(VIDEO_SECTIONS, totalPage = 10)
-commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
+# commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
 # commentSpider.crawlCommentsByContentId(4259705, True)

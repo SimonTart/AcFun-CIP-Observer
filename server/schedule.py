@@ -8,13 +8,13 @@ from sentry import ravenClient
 scheduler = BlockingScheduler()
 
 # 抓取最新的文章
-scheduler.add_job(contentSpider.crawlAllSectionsArticles, args= [articleSections], name='抓取最新文章', trigger='interval', minutes=10)
+scheduler.add_job(contentSpider.crawlAllSectionsArticles, args= [articleSections], name='抓取最新文章', trigger='interval', minutes=5)
 
 # 抓取最新的视频
-scheduler.add_job(contentSpider.crawlAllSectionsVideos, args= [videoSections], name='抓取最新视频', trigger='interval', minutes=10)
+scheduler.add_job(contentSpider.crawlAllSectionsVideos, args= [videoSections], name='抓取最新视频', trigger='interval', minutes=5)
 
 ## 最近一天的文章的评论，每15分钟抓取最近三天的评论
-scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取一天内最新评论', trigger='interval', minutes=10)
+scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取一天内最新评论', trigger='interval', minutes=5)
 
 ## 每小时抓一次最近三天的评论
 # scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取三天内最新评论', trigger='interval', hours=1)
