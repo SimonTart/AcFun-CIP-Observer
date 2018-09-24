@@ -20,7 +20,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'periodType': -1,
             'filterTitleImage': 'true',
         }
-        res = proxy.get("http://webapi.aixifan.com/query/article/list", params=params)
+        res = proxy.get(
+            "http://webapi.aixifan.com/query/article/list",
+            params = params,
+            Referer = "http://www.acfun.cn/v/list{}/index.htm".format(section.get('channelId'))
+        )
 
     if sectionType == contentTypes['video']:
         params = {
@@ -29,7 +33,11 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
             'channelId': section.get('channelId'),
             'sort': 0,
         }
-        res = proxy.get("http://www.acfun.cn/list/getlist", params=params)
+        res = proxy.get(
+            "http://www.acfun.cn/list/getlist",
+            params=params,
+            Referer = "http://www.acfun.cn/v/list{}/index.htm".format(section.get('channelId'))
+        )
 
     # 统一处理res
     if res.status_code != 200:
@@ -41,7 +49,7 @@ def getOnePageContents(section, sectionType, pageNumber = 1, pageSize = 100):
         except:
             ravenClient.capture(sectionType + ' JSON Error', extra= { 'res': res, 'statusCode': res.status_code, 'text': res.text })
             return []
-    
+
     # return正常值
     if sectionType == contentTypes['article']:
         return json.get('data').get('articleList')
@@ -72,7 +80,7 @@ def formatContentToModle(content, section, sectionType):
             'contentType': sectionType,
             'channelId': section['channelId']
         }
-    
+
     if sectionType == contentTypes['video']:
         return {
             'id': content.get('id'),
@@ -132,7 +140,7 @@ def crawlAllSectionsArticles(sections, totalPage = 1):
         t = threading.Thread(target = crawlContentsBySection, args=(section, contentTypes['article'], totalPage))
         t.start()
         threadList.append(t)
-    
+
     for t in threadList:
         t.join()
     logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
@@ -152,8 +160,8 @@ def crawlAllSectionsVideos(sections, totalPage = 5):
                 t = threading.Thread(target = crawlContentsBySection, args=(subSection, contentTypes['video'], totalPage))
                 t.start()
                 threadList.append(t)
-    
+
     for t in threadList:
         t.join()
     logging.info('此次抓取视频共使用：' + str(time() - start) + '秒')
-        
+

@@ -18,7 +18,11 @@ def requestComments(contentId, pageNumber = 1, pageSize = 50):
         'currentPage': pageNumber,
         'pageSize': pageSize,
     }
-    return proxy.get('http://www.acfun.cn/comment_list_json.aspx', params=params)
+    return proxy.get(
+            'http://www.acfun.cn/comment_list_json.aspx',
+            params = params,
+            Referer = "http://www.acfun.cn/a/ac{}".format(contentId)
+        )
 
 def getCommentDictFromRes(res):
     data = res.json().get('data')
