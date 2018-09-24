@@ -48,7 +48,7 @@ def getCommentsByOrder(contentId, crawlAll):
             commentDict.update(newCommentDict)
 
     return commentDict.values()
-    
+
 
 def formatCommentToModel(comment, contentId):
     return {
@@ -115,8 +115,8 @@ def crawlCommentsByContentId(contentId, crawlAll):
 def crawlCommentsByContentIds(contentIds, crawlAll):
     for contentId in contentIds:
         crawlCommentsByContentId(contentId, crawlAll)
-    
-def crawlLatestComments(day, useThread = True, threadCrawlNum = 10, crawlAll = False):
+
+def crawlLatestComments(day, useThread = True, threadCrawlNum = 30, crawlAll = False):
     start = time()
     session = Session()
     contents = session.query(Content.id).filter(Content.publishedAt >= arrow.now().shift(days= -day).format('YYYY-MM-DD HH:MM:SS')).all()
@@ -133,4 +133,3 @@ def crawlLatestComments(day, useThread = True, threadCrawlNum = 10, crawlAll = F
     else:
         crawlCommentsByContentIds(contentIds, crawlAll)
     logging.info('此次一共抓取' + str(len(contentIds)) + '个内容的评论，共使用：' + str(time() - start) + '秒')
-    
