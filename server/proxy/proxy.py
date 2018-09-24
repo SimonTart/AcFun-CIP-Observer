@@ -24,7 +24,6 @@ def request(method, url, **kwargs):
         proxy = getProxy()
         requestCount = 3
         while requestCount > 0:
-            hasException = False
             try:
                 res = requests.request(method, url, timeout = 5, proxies={'http': 'http://{}'.format(proxy)}, **kwargs)
                 data = res.json().get('data')
@@ -34,10 +33,10 @@ def request(method, url, **kwargs):
                     requestCount -= 1
             except:
                 requestCount -= 1
-        # logging.error('IP {} Not Availble'.format(proxy))
+        logging.error('IP {} Not Availble'.format(proxy))
         proxyCount -= 1
-        # deleteProxy(proxy)
-            
+        deleteProxy(proxy)
+
 
     logging.error('Proxy Not Availble')
     logging.info('Proxy Not Availble, Using Local Network')
