@@ -13,3 +13,4 @@ pyvenv.cfg
 .DS_Store
 ENV
 lib64
+.idea/

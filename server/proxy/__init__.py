@@ -1,1 +1,1 @@
-from . import proxy
+from .proxy import Proxy
