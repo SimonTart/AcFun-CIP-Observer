@@ -14,20 +14,24 @@ import arrow
 class ContentSpider:
     def __init__(
         self,
+        section,
+        section_type,
         total_page=100,
         page_size=100,
         article_order_type=2,
         min_published_date=None,
         min_latest_comment_time=None
     ):
+        self.section = section
+        self.section_type = section_type
         self.total_page = total_page
         self.page_size = page_size
         self.article_order_type = article_order_type
         self.min_published_date = min_published_date
         self.min_latest_comment_time = min_latest_comment_time
 
-    def format_content_to_model(self, content, section, section_type):
-        if section_type == contentTypes['article']:
+    def format_content_to_model(self, content):
+        if self.section_type == contentTypes['article']:
             return {
                 'id': content.get('id'),
                 'type': content.get('channel_name'),
@@ -40,14 +44,14 @@ class ContentSpider:
                 'publishedAt': formatTimestamp(content.get('contribute_time')),
                 'publishedBy': content.get('user_id'),
                 'bananaNum': content.get('banana_count'),
-                'contentType': section_type,
-                'channelId': section['channelId']
+                'contentType': self.section_type,
+                'channelId': self.section['channelId']
             }
 
-        if section_type == contentTypes['video']:
+        if self.section_type == contentTypes['video']:
             return {
                 'id': content.get('id'),
-                'type': section.get('name'),
+                'type': self.section.get('name'),
                 'title': content.get('title'),
                 'viewNum': content.get('viewCount'),
                 'commentNum': content.get('commentCount'),
@@ -55,16 +59,16 @@ class ContentSpider:
                 'publishedAt': content.get('contributeTimeFormat'),
                 'publishedBy': content.get('userId'),
                 'bananaNum': content.get('bananaCount'),
-                'contentType': section_type,
-                'channelId': section['channelId']
+                'contentType': self.section_type,
+                'channelId': self.section['channelId']
             }
 
-    def get_one_page_contents(self, section, section_type, page_number):
-        if section_type == contentTypes['article']:
+    def get_one_page_contents(self, page_number):
+        if self.section_type == contentTypes['article']:
             params = {
                 'pageNo': page_number,
                 'size': self.page_size,
-                'realmIds': section.get('realmIds'),
+                'realmIds': self.section.get('realmIds'),
                 'originalOnly': 'false',
                 'orderType': self.article_order_type,
                 'periodType': -1,
@@ -74,44 +78,36 @@ class ContentSpider:
                 'get',
                 'http://webapi.aixifan.com/query/article/list',
                 params=params,
-                Referer="http://www.acfun.cn/v/list{}/index.htm".format(section.get('channelId'))
+                Referer="http://www.acfun.cn/v/list{}/index.htm".format(self.section.get('channelId'))
             )
 
-        if section_type == contentTypes['video']:
+        if self.section_type == contentTypes['video']:
             params = {
                 'pageNo': page_number,
                 'size': 20,  # 文章默认20，传其他值也是无效的
-                'channelId': section.get('channelId'),
+                'channelId': self.section.get('channelId'),
                 'sort': 0,
             }
             res = Proxy().request_acfun(
                 'get',
                 'http://www.acfun.cn/list/getlist',
                 params=params,
-                Referer="http://www.acfun.cn/v/list{}/index.htm".format(section.get('channelId'))
+                Referer="http://www.acfun.cn/v/list{}/index.htm".format(self.section.get('channelId'))
             )
 
         json = res.json()
         content_list = []
         # return正常值
-        if section_type == contentTypes['article']:
+        if self.section_type == contentTypes['article']:
             content_list = json.get('data').get('articleList')
-        if section_type == contentTypes['video']:
+        if self.section_type == contentTypes['video']:
             content_list = json.get('data').get('data')
-        return [self.format_content_to_model(content, section, section_type) for content in content_list]
+        return [self.format_content_to_model(content) for content in content_list]
 
-    def get_contents(
-        self,
-        section,
-        section_type,
-    ):
+    def get_contents(self):
         content_list = []
         for page_number in range(1, self.total_page + 1):
-            new_content_list = self.get_one_page_contents(
-                section,
-                section_type,
-                page_number,
-            )
+            new_content_list = self.get_one_page_contents(page_number)
             content_list.extend(new_content_list)
 
             if self.min_published_date is not None:
@@ -138,15 +134,11 @@ class ContentSpider:
 
         session.close()
 
-    def crawl_contents_by_section(
-        self,
-        section,
-        section_type,
-    ):
+    def crawl_contents(self):
         start = time()
         start_get_time = time()
 
-        content_list = self.get_contents(section, section_type)
+        content_list = self.get_contents()
         time_of_get = time() - start_get_time
 
         start_save_time = time()
@@ -155,7 +147,7 @@ class ContentSpider:
 
         time_of_total = time() - start
         logging.info(
-            '抓取' + section_type + '[' + section.get('name') + ']分区内容' +
+            '抓取' + self.section_type + '[' + self.section.get('name') + ']分区内容' +
             '[一共抓取' + str(len(content_list)) + '个内容]' +
             '[一共花费' + str(time_of_total) + ' 秒]' +
             '[请求数据花费' + str(time_of_get) + '秒]' +
@@ -163,40 +155,60 @@ class ContentSpider:
         )
         return content_list
 
-    def crawl_all_sections_articles(self, sections):
-        thread_list = []
-        start = time()
-        for section in sections:
+
+def crawl_one_section(**kwargs):
+    ContentSpider(**kwargs).crawl_contents()
+
+
+def crawl_all_sections_articles(sections, **kwargs):
+    thread_list = []
+    start = time()
+    for section in sections:
+        t = threading.Thread(
+            target=crawl_one_section,
+            kwargs={
+                'section': section,
+                'section_type': contentTypes['article'],
+                **kwargs
+            }
+        )
+        t.start()
+        thread_list.append(t)
+
+    for t in thread_list:
+        t.join()
+    logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
+
+
+def crawl_all_sections_videos(sections, **kwargs):
+    thread_list = []
+    start = time()
+    for section in sections:
+        if 'subSections' not in section:
             t = threading.Thread(
-                target=self.crawl_contents_by_section,
-                args=(section, contentTypes['article'])
+                target=crawl_one_section,
+                kwargs={
+                    'section': section,
+                    'section_type': contentTypes['video'],
+                    **kwargs
+                }
             )
             t.start()
             thread_list.append(t)
-
-        for t in thread_list:
-            t.join()
-        logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
-
-    def crawl_all_sections_videos(self, sections):
-        thread_list = []
-        start = time()
-        for section in sections:
-            if 'subSections' not in section:
+        else:
+            sub_sections = section['subSections']
+            for sub_section in sub_sections:
                 t = threading.Thread(
-                    target=self.crawl_contents_by_section,
-                    args=(section, contentTypes['video'])
+                    target=crawl_one_section,
+                    kwargs={
+                        'section': sub_section,
+                        'section_type': contentTypes['video'],
+                        **kwargs
+                    }
                 )
                 t.start()
                 thread_list.append(t)
-            else:
-                sub_sections = section['subSections']
-                for sub_section in sub_sections:
-                    t = threading.Thread(target=self.crawl_contents_by_section,
-                                         args=(sub_section, contentTypes['video']))
-                    t.start()
-                    thread_list.append(t)
 
-        for t in thread_list:
-            t.join()
-        logging.info('此次抓取视频共使用：' + str(time() - start) + '秒')
+    for t in thread_list:
+        t.join()
+    logging.info('此次抓取视频共使用：' + str(time() - start) + '秒')
