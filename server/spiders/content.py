@@ -12,7 +12,21 @@ import arrow
 
 
 class ContentSpider:
-    def format_content_to_model(selft, content, section, section_type):
+    def __init__(
+        self,
+        total_page=100,
+        page_size=100,
+        article_order_type=2,
+        min_published_date=None,
+        min_latest_comment_time=None
+    ):
+        self.total_page = total_page
+        self.page_size = page_size
+        self.article_order_type = article_order_type
+        self.min_published_date = min_published_date
+        self.min_latest_comment_time = min_latest_comment_time
+
+    def format_content_to_model(self, content, section, section_type):
         if section_type == contentTypes['article']:
             return {
                 'id': content.get('id'),
@@ -22,7 +36,7 @@ class ContentSpider:
                 'commentNum': content.get('comment_count'),
                 'realmId': content.get('realm_id'),
                 'realmName': content.get('realm_name'),
-                'latestCommentTime': content.get('latest_comment_time'),
+                'latestCommentTime': formatTimestamp(content.get('latest_comment_time')),
                 'publishedAt': formatTimestamp(content.get('contribute_time')),
                 'publishedBy': content.get('user_id'),
                 'bananaNum': content.get('banana_count'),
@@ -37,7 +51,7 @@ class ContentSpider:
                 'title': content.get('title'),
                 'viewNum': content.get('viewCount'),
                 'commentNum': content.get('commentCount'),
-                'latestCommentTime': content.get('latest_comment_time'),
+                'latestCommentTime': formatTimestamp(content.get('latest_comment_time')),
                 'publishedAt': content.get('contributeTimeFormat'),
                 'publishedBy': content.get('userId'),
                 'bananaNum': content.get('bananaCount'),
@@ -45,14 +59,14 @@ class ContentSpider:
                 'channelId': section['channelId']
             }
 
-    def get_one_page_contents(self, section, section_type, page_number, page_size=100, article_order_type=2):
+    def get_one_page_contents(self, section, section_type, page_number):
         if section_type == contentTypes['article']:
             params = {
                 'pageNo': page_number,
-                'size': page_size,
+                'size': self.page_size,
                 'realmIds': section.get('realmIds'),
                 'originalOnly': 'false',
-                'orderType': article_order_type,
+                'orderType': self.article_order_type,
                 'periodType': -1,
                 'filterTitleImage': 'true',
             }
@@ -90,29 +104,24 @@ class ContentSpider:
         self,
         section,
         section_type,
-        total_page,
-        article_order_type=None,
-        max_published_date=None,
-        max_latest_comment_time=None
     ):
         content_list = []
-        for page_number in range(1, total_page + 1):
+        for page_number in range(1, self.total_page + 1):
             new_content_list = self.get_one_page_contents(
                 section,
                 section_type,
                 page_number,
-                article_order_type=article_order_type
             )
             content_list.extend(new_content_list)
 
-            if max_published_date is not None:
+            if self.min_published_date is not None:
                 last_content = new_content_list[-1]
-                if arrow.get(last_content['publishedAt']) < arrow.get(max_published_date):
+                if arrow.get(last_content['publishedAt']) < arrow.get(self.min_published_date):
                     return content_list
 
-            if max_latest_comment_time is not None:
+            if self.min_latest_comment_time is not None:
                 last_content = new_content_list[-1]
-                if arrow.get(last_content['latestCommentTime']) < arrow.get(max_latest_comment_time):
+                if arrow.get(last_content['latestCommentTime']) < arrow.get(self.min_latest_comment_time):
                     return content_list
         return content_list
 
@@ -129,11 +138,15 @@ class ContentSpider:
 
         session.close()
 
-    def crawl_contents_by_section(self, section, section_type, total_page=1):
+    def crawl_contents_by_section(
+        self,
+        section,
+        section_type,
+    ):
         start = time()
         start_get_time = time()
 
-        content_list = self.get_contents(section, section_type, total_page)
+        content_list = self.get_contents(section, section_type)
         time_of_get = time() - start_get_time
 
         start_save_time = time()
@@ -150,13 +163,13 @@ class ContentSpider:
         )
         return content_list
 
-    def crawl_all_sections_articles(self, sections, total_page):
+    def crawl_all_sections_articles(self, sections):
         thread_list = []
         start = time()
         for section in sections:
             t = threading.Thread(
                 target=self.crawl_contents_by_section,
-                args=(section, contentTypes['article'], total_page)
+                args=(section, contentTypes['article'])
             )
             t.start()
             thread_list.append(t)
@@ -165,14 +178,14 @@ class ContentSpider:
             t.join()
         logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
 
-    def crawl_all_sections_videos(self, sections, total_page):
+    def crawl_all_sections_videos(self, sections):
         thread_list = []
         start = time()
         for section in sections:
             if 'subSections' not in section:
                 t = threading.Thread(
                     target=self.crawl_contents_by_section,
-                    args=(section, contentTypes['video'], total_page)
+                    args=(section, contentTypes['video'])
                 )
                 t.start()
                 thread_list.append(t)
@@ -180,7 +193,7 @@ class ContentSpider:
                 sub_sections = section['subSections']
                 for sub_section in sub_sections:
                     t = threading.Thread(target=self.crawl_contents_by_section,
-                                         args=(sub_section, contentTypes['video'], total_page))
+                                         args=(sub_section, contentTypes['video']))
                     t.start()
                     thread_list.append(t)
 

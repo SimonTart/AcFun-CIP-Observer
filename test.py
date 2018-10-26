@@ -18,10 +18,17 @@ logging.basicConfig(
 # start = time()
 # print('cost', time() - start)
 
-# contentSpider.crawlAllSectionsArticles(ARTICLE_SECTIONS, totalPage = 1)
-# contentSpider.crawlAllSectionsVideos(VIDEO_SECTIONS, totalPage = 1)
-# commentSpider.crawlLatestComments(1, useThread=True, crawlAll=False)
-# commentSpider.crawlCommentsByContentId(4259705, True)
+# 获取最近10页的内容
+# ContentSpider(total_page=10).crawl_all_sections_articles(ARTICLE_SECTIONS)
+# ContentSpider(total_page=10).crawl_all_sections_videos(VIDEO_SECTIONS)
 
-ContentSpider().crawl_all_sections_articles(ARTICLE_SECTIONS, total_page=10)
-ContentSpider().crawl_all_sections_videos(VIDEO_SECTIONS, total_page=10)
+# 获取这个之前的内容
+# ContentSpider(min_published_date='2018-10-26 00:00:00').crawl_all_sections_videos(VIDEO_SECTIONS)
+# ContentSpider(min_published_date='2018-10-26 00:00:00').crawl_all_sections_articles(ARTICLE_SECTIONS)
+
+# 获取新评论的文章
+ContentSpider(article_order_type=1, min_latest_comment_time='2018-10-26 00:00:00').crawl_all_sections_articles(ARTICLE_SECTIONS)
+
+
+
+
