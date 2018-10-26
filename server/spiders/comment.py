@@ -115,3 +115,4 @@ class CommentSpider:
         comments = self.get_comments_by_order()
         comments = [self.format_comment_to_model(comment) for comment in comments]
         self.save_comments(comments)
+        return comments

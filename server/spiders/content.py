@@ -156,28 +156,36 @@ class ContentSpider:
         return content_list
 
 
-def crawl_one_section(**kwargs):
-    ContentSpider(**kwargs).crawl_contents()
+class crawl_one_section(threading.Thread):
+    def __init__(self, **kwargs):
+        self.content_list = []
+        self.kwargs = kwargs
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.content_list = ContentSpider(**self.kwargs).crawl_contents()
+
+    def get_result(self):
+        return self.content_list
 
 
 def crawl_all_sections_articles(sections, **kwargs):
     thread_list = []
     start = time()
     for section in sections:
-        t = threading.Thread(
-            target=crawl_one_section,
-            kwargs={
-                'section': section,
-                'section_type': contentTypes['article'],
-                **kwargs
-            }
+        t = crawl_one_section(
+            section=section,
+            section_type=contentTypes['article'],
+            ** kwargs
         )
         t.start()
         thread_list.append(t)
-
+    content_list = []
     for t in thread_list:
         t.join()
+        content_list.extend(t.get_result())
     logging.info('此次抓取文章共使用：' + str(time() - start) + '秒')
+    return content_list
 
 
 def crawl_all_sections_videos(sections, **kwargs):
@@ -185,30 +193,26 @@ def crawl_all_sections_videos(sections, **kwargs):
     start = time()
     for section in sections:
         if 'subSections' not in section:
-            t = threading.Thread(
-                target=crawl_one_section,
-                kwargs={
-                    'section': section,
-                    'section_type': contentTypes['video'],
-                    **kwargs
-                }
+            t = crawl_one_section(
+                section=section,
+                section_type=contentTypes['video'],
+                **kwargs
             )
             t.start()
             thread_list.append(t)
         else:
             sub_sections = section['subSections']
             for sub_section in sub_sections:
-                t = threading.Thread(
-                    target=crawl_one_section,
-                    kwargs={
-                        'section': sub_section,
-                        'section_type': contentTypes['video'],
-                        **kwargs
-                    }
+                t = crawl_one_section(
+                    section=section,
+                    section_type=contentTypes['video'],
+                    **kwargs
                 )
                 t.start()
                 thread_list.append(t)
-
+    content_list = []
     for t in thread_list:
         t.join()
+        content_list.extend(t.get_result())
     logging.info('此次抓取视频共使用：' + str(time() - start) + '秒')
+    return content_list
