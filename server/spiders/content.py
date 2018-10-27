@@ -93,7 +93,7 @@ class ContentSpider:
         if self.section_type == contentTypes['video']:
             params = {
                 'pageNo': page_number,
-                'size': 20,  # 文章默认20，传其他值也是无效的
+                'size': 20,  # 视频默认20，传其他值也是无效的
                 'channelId': self.section.get('channelId'),
                 'sort': 0,
             }
@@ -111,6 +111,9 @@ class ContentSpider:
             content_list = json.get('data').get('articleList')
         if self.section_type == contentTypes['video']:
             content_list = json.get('data').get('data')
+        if len(content_list) == 0:
+            print(res.json())
+            print(params)
         return [self.format_content_to_model(content) for content in content_list]
 
     def get_contents(self):
@@ -118,6 +121,9 @@ class ContentSpider:
         for page_number in range(1, self.total_page + 1):
             new_content_list = self.get_one_page_contents(page_number)
             content_list.extend(new_content_list)
+            if len(new_content_list) == 0:
+                print(new_content_list)
+                print(page_number)
 
             if self.min_published_date is not None:
                 last_content = new_content_list[-1]

@@ -1,8 +1,8 @@
 import logging
 import traceback
 from server.spiders.content import crawl_all_sections_articles, crawl_all_sections_videos
-from server.spiders.comment import CommentSpider, crawl_content_latest_comments
-from server.schedule import scheduler
+from server.spiders.comment import crawl_content_latest_comments
+from server.schedule import crawl_all_content_latest_comment
 from time import time
 from server import server
 from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
@@ -35,5 +35,8 @@ logging.basicConfig(
 
 # 抓取最近的三天的视频评论
 # crawl_content_latest_comments(VIDEO_SECTIONS[1]['subSections'][0], contentTypes['video'])
+
+#schedul 抓取所有的最近评论
+crawl_all_content_latest_comment()
 
 
