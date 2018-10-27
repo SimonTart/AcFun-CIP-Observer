@@ -183,10 +183,6 @@ VIDEO_SECTIONS = [
             {
                 "name": "Mugen",
                 "channelId": 72
-            },
-            {
-                "name": "游戏中心",
-                "channelId": 0
             }
         ]
     },

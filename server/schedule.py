@@ -1,28 +1,36 @@
 import apscheduler
 from apscheduler.schedulers.blocking import BlockingScheduler
-from config import ARTICLE_SECTIONS as articleSections, VIDEO_SECTIONS as videoSections
-import server.spiders.content as contentSpider
-import server.spiders.comment as commentSpider
+from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
+from .spiders.content import ContentSpider
+from .spiders.comment import crawl_content_latest_comments
 from sentry import ravenClient
+from config import contentTypes
 
 scheduler = BlockingScheduler()
 
-# 抓取最新的文章
-scheduler.add_job(contentSpider.crawlAllSectionsArticles, args= [articleSections], name='抓取最新文章', trigger='interval', minutes=10)
 
-# 抓取最新的视频
-scheduler.add_job(contentSpider.crawlAllSectionsVideos, args= [videoSections], name='抓取最新视频', trigger='interval', minutes=10)
+# 抓取内容的最新评论
+def crawl_section_content_latest_comment(sections, content_type):
+    for section in sections:
+        if 'subSections' not in section:
+            crawl_content_latest_comments(section, content_type)
+        else:
+            for sub_section in section['subSections']:
+                crawl_content_latest_comments(sub_section, content_type)
 
-## 最近一天的文章的评论，每15分钟抓取最近三天的评论
-scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取一天内最新评论', trigger='interval', minutes=5)
 
-## 每小时抓一次最近三天的评论
-# scheduler.add_job(commentSpider.crawlLatestComments, args= [3], name='抓取三天内最新评论', trigger='interval', hours=1)
+#抓取所有内容的最新评论
+def crawl_all_content_latest_comment():
+    crawl_section_content_latest_comment(ARTICLE_SECTIONS, contentTypes['article'])
+    crawl_section_content_latest_comment(VIDEO_SECTIONS, contentTypes['video'])
 
-## 最近一周的评论 每晚抓取一次评论
-scheduler.add_job(commentSpider.crawlLatestComments, kwargs= { 'day': 7, 'useThread': False, 'crawlAll': True}, name='抓取一周内文章评论', trigger='cron', hour=5, minute=30)
 
 def errorListener(event):
     ravenClient.capture(event.exception)
+
+
+scheduler.add_job(crawl_all_content_latest_comment, name='抓取所有内容的最新评论', trigger='interval', minutes=1, max_instances=1)
+
+
 
 scheduler.add_listener(errorListener, mask = apscheduler.events.EVENT_JOB_ERROR)
