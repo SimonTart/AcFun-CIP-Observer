@@ -1,11 +1,18 @@
 import apscheduler
 from apscheduler.schedulers.blocking import BlockingScheduler
 from config import ARTICLE_SECTIONS as articleSections, VIDEO_SECTIONS as videoSections
-import server.spiders.content as contentSpider
+from .spiders.content import ContentSpider
 import server.spiders.comment as commentSpider
 from sentry import ravenClient
+from .models.spiderRecord import SpiderRecord
+from db import Session
+import arrow
+from config import contentTypes
+
+CRAWL_LATEST_COMMENT = 'CRAWL_LATEST_COMMENT'
 
 scheduler = BlockingScheduler()
+
 
 # 抓取最新的文章
 # scheduler.add_job(contentSpider.crawlAllSectionsArticles, args= [articleSections], name='抓取最新文章', trigger='interval', minutes=10)

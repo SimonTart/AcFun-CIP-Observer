@@ -22,6 +22,15 @@ class ContentSpider:
         min_published_date=None,
         min_latest_comment_time=None
     ):
+        """
+        :param section:
+        :param section_type:
+        :param total_page:
+        :param page_size:
+        :param article_order_type: 1 是最新动态 2 是最新发表
+        :param min_published_date:
+        :param min_latest_comment_time:
+        """
         self.section = section
         self.section_type = section_type
         self.total_page = total_page
@@ -55,7 +64,7 @@ class ContentSpider:
                 'title': content.get('title'),
                 'viewNum': content.get('viewCount'),
                 'commentNum': content.get('commentCount'),
-                'latestCommentTime': formatTimestamp(content.get('latest_comment_time')),
+                'latestCommentTime': formatTimestamp(content.get('latestCommentTime')),
                 'publishedAt': content.get('contributeTimeFormat'),
                 'publishedBy': content.get('userId'),
                 'bananaNum': content.get('bananaCount'),
@@ -156,7 +165,7 @@ class ContentSpider:
         return content_list
 
 
-class crawl_one_section(threading.Thread):
+class CrawlOneSection(threading.Thread):
     def __init__(self, **kwargs):
         self.content_list = []
         self.kwargs = kwargs
@@ -173,7 +182,7 @@ def crawl_all_sections_articles(sections, **kwargs):
     thread_list = []
     start = time()
     for section in sections:
-        t = crawl_one_section(
+        t = CrawlOneSection(
             section=section,
             section_type=contentTypes['article'],
             ** kwargs
@@ -193,7 +202,7 @@ def crawl_all_sections_videos(sections, **kwargs):
     start = time()
     for section in sections:
         if 'subSections' not in section:
-            t = crawl_one_section(
+            t = CrawlOneSection(
                 section=section,
                 section_type=contentTypes['video'],
                 **kwargs
@@ -203,7 +212,7 @@ def crawl_all_sections_videos(sections, **kwargs):
         else:
             sub_sections = section['subSections']
             for sub_section in sub_sections:
-                t = crawl_one_section(
+                t = CrawlOneSection(
                     section=section,
                     section_type=contentTypes['video'],
                     **kwargs

@@ -2,7 +2,10 @@ from ..proxy import Proxy
 import arrow
 from db import Session
 from ..models.comment import Comment
-
+from ..models.spiderRecord import SpiderRecord
+from .content import ContentSpider
+from config import contentTypes
+from common.constant import record_types
 
 class CommentSpider:
     def __init__(
@@ -116,3 +119,49 @@ class CommentSpider:
         comments = [self.format_comment_to_model(comment) for comment in comments]
         self.save_comments(comments)
         return comments
+
+
+def crawl_content_latest_comments(section, section_type):
+    channel_id = section.get('channelId')
+    record_type = record_types['crawl_content_comment']
+    session = Session()
+
+    spider_record = session.query(SpiderRecord).filter(
+        SpiderRecord.channelId == channel_id,
+        SpiderRecord.type == record_type
+    ).first()
+
+    last_success_date = arrow.now().shift(hours=-1) if spider_record is None else arrow.get(spider_record.successDate)
+    kwargs = {}
+    if section_type == contentTypes['article']:
+        kwargs = {
+            'article_order_type': 1,
+            'min_latest_comment_time': last_success_date
+        }
+    if section_type == contentTypes['video']:
+        kwargs = {
+            'min_published_date': arrow.now().shift(days=-3)  #三天以内的视频
+        }
+
+    content_list = ContentSpider(section, section_type, **kwargs).crawl_contents()
+    content_list = filter(
+        lambda c: c['commentNum'] > 0 and arrow.get(c['latestCommentTime']) > last_success_date,
+        content_list
+    )
+
+    for content in content_list:
+        CommentSpider(
+            content_id=content['id'],
+            min_comment_time=last_success_date
+        ).crawl_comments()
+
+    if spider_record is None:
+        session.add(SpiderRecord(
+            channelId=channel_id,
+            type=record_type,
+            successDate=arrow.now().format('YYYY-MM-DD HH:mm:ss')
+        ))
+    else:
+        spider_record.successDate = arrow.now().format('YYYY-MM-DD HH:mm:ss')
+    session.commit()
+

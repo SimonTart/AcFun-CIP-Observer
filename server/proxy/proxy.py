@@ -21,7 +21,6 @@ class Proxy:
             'Connection': 'keep-alive',
             'Cookie': 'Cookie: session_id=3589639185CF658; _did=web_5612985630A41123; uuid=df556396b4424b85ed2af9a5bc0ac956; supernova=1',
             'DNT': '1',
-            'Host': 'www.acfun.cn',
             'Pragma': 'no-cache',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
             'X-Requested-With': 'XMLHttpRequest',

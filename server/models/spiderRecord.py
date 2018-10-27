@@ -4,9 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class spiderRecord(Base):
+class SpiderRecord(Base):
     __tablename__ = 'spider_record'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    channelId = Column('channel_id', Integer)
     type = Column(String(255), nullable=False)
     successDate = Column('success_date', DateTime, nullable=False)
     updateAt = Column(
