@@ -99,7 +99,6 @@ class CommentSpider:
         need_add_comment_ids = comment_ids - comment_ids_in_db
         need_add_comments = list(filter(lambda c: c['id'] in need_add_comment_ids, comments))
         session.add_all([Comment(**comment) for comment in need_add_comments])
-        session.commit()
 
         # 更新旧的评论
         need_update_comments = list(
@@ -110,8 +109,8 @@ class CommentSpider:
                 'isDelete': comment.get('isDelete'),
                 'isUpDelete': comment.get('isUpDelete')
             })
-            session.commit()
 
+        session.commit()
         session.close()
 
     def crawl_comments(self):
@@ -164,4 +163,5 @@ def crawl_content_latest_comments(section, section_type):
     else:
         spider_record.successDate = arrow.now().format('YYYY-MM-DD HH:mm:ss')
     session.commit()
+    session.close()
 
