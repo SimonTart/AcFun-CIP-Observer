@@ -1,5 +1,7 @@
 import apscheduler
 import threading
+import time
+import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
 from .spiders.content import ContentSpider
@@ -40,6 +42,8 @@ def crawl_all_content_latest_comment():
     crawl_section_content_latest_comment(VIDEO_SECTIONS, contentTypes['video'])
 
 def crawl_all_content_latest_comment_thread():
+    start_time = time.time()
+
     thread_list = []
     article_thread_list = crawl_section_content_latest_comment_thread(ARTICLE_SECTIONS, contentTypes['article'])
     video_thread_list = crawl_section_content_latest_comment_thread(VIDEO_SECTIONS, contentTypes['video'])
@@ -48,6 +52,10 @@ def crawl_all_content_latest_comment_thread():
 
     for thread in thread_list:
         thread.join()
+
+    end_time = time.time()
+    logging.info('---------------------- 抓取完成 ------------------')
+    logging.info('总共花费{}s'.format(end_time - start_time))
 
 
 def errorListener(event):

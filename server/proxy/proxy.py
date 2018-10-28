@@ -74,9 +74,10 @@ class Proxy:
                     error_res = res
                     data = res.json().get('data')
                     if res.status_code == 200 and data is not None:
-                        logging.info('请求成功: {method} {url}'.format(**{
+                        logging.info('请求acfun成功: {method} {url} {kwargs}'.format(**{
                             'method': method,
-                            'url': url
+                            'url': url,
+                            'kwargs': kwargs
                         }))
                         return res
                     else:
@@ -107,7 +108,11 @@ class Proxy:
                 logging.info("因为ACFUN接口问题导致请求失败")
             self.currentRequestTyIpTime = self.currentRequestTyIpTime + 1
 
-        logging.error('请求acfun失败')
+        logging.error('请求acfun失败: {method} {url} {kwargs}'.format(**{
+            'method': method,
+            'url': url,
+            'kwargs': kwargs
+        }))
         ravenClient.captureMessage('请求acfun失败, url', data={
             'method': method,
             'url': url,

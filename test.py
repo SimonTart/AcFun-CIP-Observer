@@ -37,6 +37,6 @@ logging.basicConfig(
 # crawl_content_latest_comments(VIDEO_SECTIONS[1]['subSections'][0], contentTypes['video'])
 
 #schedul 抓取所有的最近评论
-crawl_all_content_latest_comment()
-# crawl_all_content_latest_comment_thread()
+# crawl_all_content_latest_comment()
+crawl_all_content_latest_comment_thread()
 

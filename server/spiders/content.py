@@ -111,9 +111,6 @@ class ContentSpider:
             content_list = json.get('data').get('articleList')
         if self.section_type == contentTypes['video']:
             content_list = json.get('data').get('data')
-        if len(content_list) == 0:
-            print(res.json())
-            print(params)
         return [self.format_content_to_model(content) for content in content_list]
 
     def get_contents(self):
