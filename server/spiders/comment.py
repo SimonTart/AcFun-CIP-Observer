@@ -1,4 +1,5 @@
 from ..proxy import Proxy
+import logging
 import arrow
 from db import Session
 from ..models.comment import Comment
@@ -36,7 +37,10 @@ class CommentSpider:
             Referer='http://www.acfun.cn/a/ac{}'.format(self.content_id)
         )
         data = res.json().get('data')
-        return (data.get('commentContentArr'), data.get('commentList'), data.get('totalPage'))
+        comment_list = data.get('commentList')
+        if comment_list is None or len(comment_list) == 0:
+            logging.error('comment list为空, res is {data}, params is {params}'.format(data=data,params=params))
+        return data.get('commentContentArr'), data.get('commentList'), data.get('totalPage')
 
     def get_comments_by_order(self):
         comment_dict, comment_list, total_page = self.request_comments(page_number=1)

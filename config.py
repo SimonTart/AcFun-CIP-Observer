@@ -1,33 +1,40 @@
 import os
 
 contentTypes = {
-  'article': 'article',
-  'video': 'video'
+    'article': 'article',
+    'video': 'video'
 }
 
-ARTICLE_SECTIONS = ({
-  'name': '综合',
-  'channelId': 110,
-  'realmIds': '5,1,2,4',
-},{
-  'name': '工作·情感',
-  'channelId': 73,
-  'realmIds': '6,7',
-},{
-  'name': '动漫文化',
-  'channelId': 74,
-  'realmIds': '13,14',
-},
-{
-  'name': '漫画·轻小说',
-  'channelId': 75,
-  'realmIds': '15,16',
-},
-{
-  'name': '游戏',
-  'channelId': 164,
-  'realmIds': '8,10,11,9,12',
-})
+ARTICLE_SECTIONS = (
+    {
+        'name': '综合',
+        'channelId': 110,
+        'realmIds': '5,22,1,33,2,4',
+    }, {
+        'name': '工作·情感',
+        'channelId': 73,
+        'realmIds': '25,6,7',
+    }, {
+        'name': '涂图话画',
+        'channelId': 184,
+        'realmIds': '17,18',
+    },
+    {
+        'name': '动漫文化',
+        'channelId': 74,
+        'realmIds': '13,14',
+    },
+    {
+        'name': '漫画·轻小说',
+        'channelId': 75,
+        'realmIds': '15,23,16',
+    },
+    {
+        'name': '游戏',
+        'channelId': 164,
+        'realmIds': '8,10,11,9,12',
+    }
+)
 
 VIDEO_SECTIONS = [
     {
@@ -311,16 +318,16 @@ VIDEO_SECTIONS = [
 ]
 
 if os.getenv('PYTHON_ENV', 'development') == 'production':
-  db = {
-    'host': os.getenv('DB_HOST'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSPORT'),
-    'database': os.getenv('DB_NAME')
-  }
+    db = {
+        'host': os.getenv('DB_HOST'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSPORT'),
+        'database': os.getenv('DB_NAME')
+    }
 else:
-  db = {
-    'host': '127.0.0.1',
-    'user': 'root',
-    'password': '',
-    'database': 'eva_acfun_dev'
-  }
+    db = {
+        'host': '127.0.0.1',
+        'user': 'root',
+        'password': '',
+        'database': 'eva_acfun_dev'
+    }
