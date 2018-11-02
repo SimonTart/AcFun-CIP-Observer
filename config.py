@@ -39,12 +39,12 @@ ARTICLE_SECTIONS = (
 VIDEO_SECTIONS = [
     {
         "name": "AC正义",
-        "channelId": 178
+        "channelId": 178,
     },
     {
-        "name": "动画",
+        "name": "番剧",
         "channelId": 155,
-        "subSections": [
+        "subSection": [
             {
                 "name": "TV动画",
                 "channelId": 67
@@ -54,18 +54,22 @@ VIDEO_SECTIONS = [
                 "channelId": 180
             },
             {
-                "name": "短片动画",
-                "channelId": 181
+                "name": "国产动画",
+                "channelId": 120
             }
         ]
     },
     {
-        "name": "二次元",
+        "name": "动画",
         "channelId": 1,
-        "subSections": [
+        "subSection": [
             {
-                "name": "短片·手书",
+                "name": "动画综合",
                 "channelId": 106
+            },
+            {
+                "name": "短片动画",
+                "channelId": 190
             },
             {
                 "name": "MAD·AMV",
@@ -90,29 +94,15 @@ VIDEO_SECTIONS = [
         ]
     },
     {
-        "name": "国产",
-        "channelId": 179,
-        "subSections": [
-            {
-                "name": "国产动画",
-                "channelId": 120
-            },
-            {
-                "name": "资讯·延伸",
-                "channelId": 182
-            }
-        ]
-    },
-    {
         "name": "音乐",
         "channelId": 58,
-        "subSections": [
+        "subSection": [
             {
                 "name": "原创·翻唱",
                 "channelId": 136
             },
             {
-                "name": "演奏",
+                "name": "演奏·乐器",
                 "channelId": 137
             },
             {
@@ -120,23 +110,19 @@ VIDEO_SECTIONS = [
                 "channelId": 103
             },
             {
-                "name": "日系音乐",
-                "channelId": 138
-            },
-            {
-                "name": "综合音乐",
+                "name": "综合音乐·现场",
                 "channelId": 139
             },
             {
-                "name": "演唱会",
-                "channelId": 140
+                "name": "音乐选集",
+                "channelId": 185
             }
         ]
     },
     {
-        "name": "舞蹈·彼女",
+        "name": "舞蹈·偶像",
         "channelId": 123,
-        "subSections": [
+        "subSection": [
             {
                 "name": "宅舞",
                 "channelId": 134
@@ -146,15 +132,11 @@ VIDEO_SECTIONS = [
                 "channelId": 135
             },
             {
-                "name": "爱豆",
+                "name": "偶像",
                 "channelId": 129
             },
             {
-                "name": "手作",
-                "channelId": 130
-            },
-            {
-                "name": "造型",
+                "name": "造型·手作",
                 "channelId": 127
             }
         ]
@@ -162,14 +144,14 @@ VIDEO_SECTIONS = [
     {
         "name": "游戏",
         "channelId": 59,
-        "subSections": [
+        "subSection": [
             {
                 "name": "主机单机",
                 "channelId": 84
             },
             {
-                "name": "游戏集锦",
-                "channelId": 83
+                "name": "网络游戏",
+                "channelId": 186
             },
             {
                 "name": "电子竞技",
@@ -180,8 +162,8 @@ VIDEO_SECTIONS = [
                 "channelId": 85
             },
             {
-                "name": "守望先锋",
-                "channelId": 170
+                "name": "手机游戏",
+                "channelId": 187
             },
             {
                 "name": "桌游卡牌",
@@ -196,7 +178,7 @@ VIDEO_SECTIONS = [
     {
         "name": "娱乐",
         "channelId": 60,
-        "subSections": [
+        "subSection": [
             {
                 "name": "生活娱乐",
                 "channelId": 86
@@ -212,28 +194,36 @@ VIDEO_SECTIONS = [
             {
                 "name": "美食",
                 "channelId": 89
+            },
+            {
+                "name": "娱乐圈",
+                "channelId": 188
             }
         ]
     },
     {
         "name": "科技",
         "channelId": 70,
-        "subSections": [
+        "subSection": [
             {
-                "name": "科学技术",
+                "name": "科技制造",
                 "channelId": 90
             },
             {
-                "name": "教程",
-                "channelId": 151
+                "name": "人文科普",
+                "channelId": 189
+            },
+            {
+                "name": "汽车",
+                "channelId": 122
             },
             {
                 "name": "数码",
                 "channelId": 91
             },
             {
-                "name": "汽车",
-                "channelId": 122
+                "name": "演讲·公开课",
+                "channelId": 151
             },
             {
                 "name": "广告",
@@ -244,29 +234,33 @@ VIDEO_SECTIONS = [
     {
         "name": "影视",
         "channelId": 68,
-        "subSections": [
+        "subSection": [
             {
-                "name": "国产剧",
-                "channelId": 141
+                "name": "预告·花絮",
+                "channelId": 192
             },
             {
-                "name": "网络剧",
-                "channelId": 121
+                "name": "电影杂谈",
+                "channelId": 193
             },
             {
-                "name": "纪录片",
-                "channelId": 100
+                "name": "剧透社",
+                "channelId": 194
             },
             {
-                "name": "综艺",
-                "channelId": 98
-            }
+                "name": "综艺Show",
+                "channelId": 195
+            },
+            {
+                "name": "纪实·短片",
+                "channelId": 196
+            },
         ]
     },
     {
         "name": "体育",
         "channelId": 69,
-        "subSections": [
+        "subSection": [
             {
                 "name": "综合体育",
                 "channelId": 152
@@ -280,15 +274,11 @@ VIDEO_SECTIONS = [
                 "channelId": 95
             },
             {
-                "name": "搏击",
+                "name": "搏击健身",
                 "channelId": 153
             },
             {
-                "name": "11区体育",
-                "channelId": 154
-            },
-            {
-                "name": "惊奇体育",
+                "name": "极限竞速",
                 "channelId": 93
             }
         ]
@@ -296,7 +286,7 @@ VIDEO_SECTIONS = [
     {
         "name": "鱼塘",
         "channelId": 125,
-        "subSections": [
+        "subSection": [
             {
                 "name": "普法安全",
                 "channelId": 183
