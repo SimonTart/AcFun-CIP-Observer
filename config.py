@@ -40,7 +40,7 @@ VIDEO_SECTIONS = [
     {
         "name": "AC正义",
         "channelId": 177,
-        "subSection": [
+        "subSections": [
             {
                 "name": "AC正义展览区",
                 "channelId": 178
@@ -50,7 +50,7 @@ VIDEO_SECTIONS = [
     {
         "name": "番剧",
         "channelId": 155,
-        "subSection": [
+        "subSections": [
             {
                 "name": "TV动画",
                 "channelId": 67
@@ -68,7 +68,7 @@ VIDEO_SECTIONS = [
     {
         "name": "动画",
         "channelId": 1,
-        "subSection": [
+        "subSections": [
             {
                 "name": "动画综合",
                 "channelId": 106
@@ -102,7 +102,7 @@ VIDEO_SECTIONS = [
     {
         "name": "音乐",
         "channelId": 58,
-        "subSection": [
+        "subSections": [
             {
                 "name": "原创·翻唱",
                 "channelId": 136
@@ -128,7 +128,7 @@ VIDEO_SECTIONS = [
     {
         "name": "舞蹈·偶像",
         "channelId": 123,
-        "subSection": [
+        "subSections": [
             {
                 "name": "宅舞",
                 "channelId": 134
@@ -150,7 +150,7 @@ VIDEO_SECTIONS = [
     {
         "name": "游戏",
         "channelId": 59,
-        "subSection": [
+        "subSections": [
             {
                 "name": "主机单机",
                 "channelId": 84
@@ -184,7 +184,7 @@ VIDEO_SECTIONS = [
     {
         "name": "娱乐",
         "channelId": 60,
-        "subSection": [
+        "subSections": [
             {
                 "name": "生活娱乐",
                 "channelId": 86
@@ -210,7 +210,7 @@ VIDEO_SECTIONS = [
     {
         "name": "科技",
         "channelId": 70,
-        "subSection": [
+        "subSections": [
             {
                 "name": "科技制造",
                 "channelId": 90
@@ -240,7 +240,7 @@ VIDEO_SECTIONS = [
     {
         "name": "影视",
         "channelId": 68,
-        "subSection": [
+        "subSections": [
             {
                 "name": "预告·花絮",
                 "channelId": 192
@@ -270,7 +270,7 @@ VIDEO_SECTIONS = [
     {
         "name": "体育",
         "channelId": 69,
-        "subSection": [
+        "subSections": [
             {
                 "name": "综合体育",
                 "channelId": 152
@@ -296,7 +296,7 @@ VIDEO_SECTIONS = [
     {
         "name": "鱼塘",
         "channelId": 125,
-        "subSection": [
+        "subSections": [
             {
                 "name": "普法安全",
                 "channelId": 183
@@ -317,7 +317,7 @@ VIDEO_SECTIONS = [
     }
 ]
 
-if os.getenv('PYTHON_ENV', 'development') == 'production':
+if os.getenv('PYTHON_ENV', 'development') == 'productio60n':
     db = {
         'host': os.getenv('DB_HOST'),
         'user': os.getenv('DB_USER'),
