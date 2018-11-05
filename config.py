@@ -39,7 +39,13 @@ ARTICLE_SECTIONS = (
 VIDEO_SECTIONS = [
     {
         "name": "AC正义",
-        "channelId": 178,
+        "channelId": 177,
+        "subSection": [
+            {
+                "name": "AC正义展览区",
+                "channelId": 178
+            }
+        ]
     },
     {
         "name": "番剧",
@@ -255,6 +261,10 @@ VIDEO_SECTIONS = [
                 "name": "纪实·短片",
                 "channelId": 196
             },
+            {
+                "name": "特色片场",
+                "channelId": 197
+            }
         ]
     },
     {
