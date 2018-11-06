@@ -317,7 +317,7 @@ VIDEO_SECTIONS = [
     }
 ]
 
-if os.getenv('PYTHON_ENV', 'development') == 'productio60n':
+if os.getenv('PYTHON_ENV', 'development') == 'production':
     db = {
         'host': os.getenv('DB_HOST'),
         'user': os.getenv('DB_USER'),
