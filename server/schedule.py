@@ -62,7 +62,7 @@ def errorListener(event):
     ravenClient.capture(event.exception)
 
 
-scheduler.add_job(crawl_all_content_latest_comment_thread, name='抓取所有内容的最新评论', trigger='interval', minutes=5, max_instances=1)
+scheduler.add_job(crawl_all_content_latest_comment_thread, name='抓取所有内容的最新评论', trigger='interval', minutes=2, max_instances=1)
 
 
 scheduler.add_listener(errorListener, mask=apscheduler.events.EVENT_JOB_ERROR)
