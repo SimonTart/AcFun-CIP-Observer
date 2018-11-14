@@ -6,13 +6,13 @@ from sentry import ravenClient
 
 class Proxy:
     def __init__(self):
-        self.MAX_GET_PROXY_TIME = 10 # 尝试获取代理的最大尝试次数
-        self.currentGetProxyTime = 0 # 当前尝试获取代理的次数
+        self.MAX_GET_PROXY_TIME = 10  # 尝试获取代理的最大尝试次数
+        self.currentGetProxyTime = 0  # 当前尝试获取代理的次数
         self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP = 4 # 一个IP尝试请求acfun的最大次数
-        self.currentIpTryTime = 0 # 当前ip尝试的次数
-        self.REQUEST_ACFUN_TIMEOUT = 5 # 请求acfun的超时设置
-        self.MAX_RQUEST_ACFUN_TIME = 20 # 尝试使用最多多少个IP去请求acfun
-        self.currentRequestTyIpTime = 0 # 当前请求尝试的不同ip次数
+        self.currentIpTryTime = 0  # 当前ip尝试的次数
+        self.REQUEST_ACFUN_TIMEOUT = 4  # 请求acfun的超时设置
+        self.MAX_RQUEST_ACFUN_TIME = 20  # 尝试使用最多多少个IP去请求acfun
+        self.currentRequestTyIpTime = 0  # 当前请求尝试的不同ip次数
         self.REQUEST_ACFUN_HEADERS = {
             'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate',
@@ -59,7 +59,8 @@ class Proxy:
         while self.currentRequestTyIpTime < self.MAX_RQUEST_ACFUN_TIME:
             proxy = self.get_proxy()
             self.currentIpTryTime = 0
-            if_acfun_error = False #是否是因为A站的原因请求失败
+            if_acfun_error = False # 是否是因为A站的原因请求失败
+            if_tengine_error = False # 是否是因为是A站Tengine漏桶漏桶机制被淹没了
             while self.currentIpTryTime < self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP:
                 error_res = None
                 try:
@@ -89,23 +90,28 @@ class Proxy:
                         'proxy': proxy
                     }))
                     logging.error(e)
+
+                    self.currentIpTryTime = self.currentIpTryTime + 1
                     if error_res is not None:
                         text = error_res.text or '';
-
-                        # 只是因为A站接口出问题了，返回的是500+ 或 404
-                        if text.find('北京弹幕网络科技有限公司') is not -1:
+                        if text.find('Tengine') != -1:
+                            # 被Tengine的漏斗原则给过滤了
+                            if_tengine_error = True
+                            self.currentIpTryTime = self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP
+                            logging.info("因为ACFUN Tengine漏桶机制问题导致请求失败")
+                        elif text.find('北京弹幕网络科技有限公司') != -1:
+                            # 只是因为A站接口出问题了，返回的是500+ 或 404
                             if_acfun_error = True
+                            logging.info("因为ACFUN接口问题导致请求失败")
 
                         logging.error(error_res.status_code)
                         logging.error(error_res.text)
-                    self.currentIpTryTime = self.currentIpTryTime + 1
 
-            # 一个ip尝试太多次 并且不是A站的原因
-            if if_acfun_error is not True:
+            # 不是A站服务器原因也不是A站tengine漏桶机制过滤
+            if if_acfun_error is not True and if_tengine_error is not True:
                 logging.info("删除代理：{}".format(proxy))
                 self.delete_proxy(proxy)
-            else:
-                logging.info("因为ACFUN接口问题导致请求失败")
+
             self.currentRequestTyIpTime = self.currentRequestTyIpTime + 1
 
         logging.error('请求acfun失败: {method} {url} {kwargs}'.format(**{
