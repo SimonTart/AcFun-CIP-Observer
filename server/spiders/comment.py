@@ -154,6 +154,8 @@ def crawl_content_latest_comments(section, section_type):
         content_list
     )
 
+    logging.info('[section_name]需要抓取评论的内容个数为{num}'.format(num=len(content_list)), section_name=section.get('name'))
+
     for content in content_list:
         CommentSpider(
             content_id=content['id'],
