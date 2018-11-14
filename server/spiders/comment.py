@@ -51,21 +51,23 @@ class CommentSpider:
 
         # 如果要抓取全部的评论
         if self.crawl_all is True:
-            for page_number in range(1, int(total_page)):
+            for page_number in range(2, int(total_page) + 1):
                 new_comment_dict, comment_list, _ = self.request_comments(page_number=page_number)
                 comment_dict.update(new_comment_dict)
             return comment_dict.values()
 
+
+
         # 如果要抓取某个时间范围内的评论
-        last_comment_id = comment_list[-1]
-        last_comment_date = comment_dict.get('c' + str(int(last_comment_id))).get('postDate')
         if self.min_comment_time is not None:
+            last_comment_id = comment_list[-1]
+            last_comment_date = comment_dict.get('c' + str(int(last_comment_id))).get('postDate')
             # 第一页已经超过了，直接返回
             if arrow.get(last_comment_date) < arrow.get(self.min_comment_time):
                 return comment_dict.values()
 
             # 继续遍历
-            for page_number in range(1, int(total_page)):
+            for page_number in range(2, int(total_page) + 1):
                 new_comment_dict, new_comment_list, _ = self.request_comments(page_number=page_number)
                 comment_dict.update(new_comment_dict)
 

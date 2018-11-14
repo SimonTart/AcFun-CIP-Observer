@@ -121,8 +121,8 @@ class ContentSpider:
             new_content_list = self.get_one_page_contents(page_number)
             content_list.extend(new_content_list)
             if len(new_content_list) == 0:
-                print(new_content_list)
-                print(page_number)
+                logging.error('获取到的新content list为空，参数 page_number = {page_number}, section {section}'.format(page_number=page_number, section=self.section))
+                continue
 
             if self.min_published_date is not None:
                 last_content = new_content_list[-1]
