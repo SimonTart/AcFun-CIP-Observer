@@ -141,22 +141,20 @@ def crawl_content_latest_comments(section, section_type):
     if section_type == contentTypes['article']:
         kwargs = {
             'article_order_type': 1,
-            'min_latest_comment_time': last_success_date
+            'is_get_latest_comment': True
         }
+
     if section_type == contentTypes['video']:
         kwargs = {
-            'min_published_date': arrow.now().shift(days=-3)  #三天以内的视频
+            'is_get_latest_comment': True
         }
 
-    content_list = ContentSpider(section, section_type, **kwargs).crawl_contents()
-    content_list = filter(
-        lambda c: c['commentNum'] > 0 and arrow.get(c['latestCommentTime']) > last_success_date,
-        content_list
-    )
+    content_spider = ContentSpider(section, section_type, **kwargs)
+    content_list, need_crawl_comment_contents = content_spider.get_contents()
 
-    logging.info('[section_name]需要抓取评论的内容个数为{num}'.format(num=len(content_list)), section_name=section.get('name'))
+    logging.info('[section_name]需要抓取评论的内容个数为{num}'.format(num=len(content_list), section_name=section.get('name')))
 
-    for content in content_list:
+    for content in need_crawl_comment_contents:
         CommentSpider(
             content_id=content['id'],
             min_comment_time=last_success_date
@@ -172,4 +170,5 @@ def crawl_content_latest_comments(section, section_type):
         spider_record.successDate = arrow.now().format('YYYY-MM-DD HH:mm:ss')
     session.commit()
     session.close()
+    content_spider.save_contents(content_list)
 

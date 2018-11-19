@@ -51,9 +51,11 @@ class Proxy:
     def get_proxy_status(self, proxy):
         return requests.get('http://127.0.0.1:5010/get_status/').content
 
-    def request_acfun(self, method, url, Referer, **kwargs):
+    def request_acfun(self, method, url, Referer=None, headers=None, **kwargs):
         if Referer is not None:
             self.REQUEST_ACFUN_HEADERS['Referer'] = Referer
+
+        request_headers = self.REQUEST_ACFUN_HEADERS if headers is None else headers
 
         self.currentRequestTyIpTime = 0
         while self.currentRequestTyIpTime < self.MAX_RQUEST_ACFUN_TIME:
@@ -68,7 +70,7 @@ class Proxy:
                                 method,
                                 url,
                                 timeout=self.REQUEST_ACFUN_TIMEOUT,
-                                headers=self.REQUEST_ACFUN_HEADERS,
+                                headers=request_headers,
                                 proxies={'http': 'http://{}'.format(proxy)},
                                 **kwargs
                             )

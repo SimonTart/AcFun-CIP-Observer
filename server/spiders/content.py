@@ -20,7 +20,7 @@ class ContentSpider:
         page_size=100,
         article_order_type=2,
         min_published_date=None,
-        min_latest_comment_time=None
+        is_get_latest_comment=False
     ):
         """
         :param section:
@@ -37,12 +37,12 @@ class ContentSpider:
         self.page_size = page_size
         self.article_order_type = article_order_type
         self.min_published_date = min_published_date
-        self.min_latest_comment_time = min_latest_comment_time
+        self.is_get_latest_comment = is_get_latest_comment
 
     def format_content_to_model(self, content):
         if self.section_type == contentTypes['article']:
             return {
-                'id': content.get('id'),
+                'id': int(content.get('id')),
                 'type': content.get('channel_name'),
                 'title': content.get('title'),
                 'viewNum': content.get('view_count'),
@@ -58,21 +58,34 @@ class ContentSpider:
             }
 
         if self.section_type == contentTypes['video']:
-            return {
-                'id': content.get('id'),
-                'type': self.section.get('name'),
-                'title': content.get('title'),
-                'viewNum': content.get('viewCount'),
-                'commentNum': content.get('commentCount'),
-                'latestCommentTime': formatTimestamp(content.get('latestCommentTime')),
-                'publishedAt': content.get('contributeTimeFormat'),
-                'publishedBy': content.get('userId'),
-                'bananaNum': content.get('bananaCount'),
-                'contentType': self.section_type,
-                'channelId': self.section['channelId']
-            }
+            if self.is_get_latest_comment:
+                return {
+                    'id': int(content.get('contentId')),
+                    'title': content.get('title'),
+                    'viewNum': content.get('views'),
+                    'commentNum': content.get('comments'),
+                    'publishedAt': formatTimestamp(content.get('releaseDate')),
+                    'publishedBy': content.get('user').get('userId'),
+                    'contentType': self.section_type,
+                    'channelId': content['channelId']
+                }
+            else:
+                return {
+                    'id': int(content.get('id')),
+                    'type': self.section.get('name'),
+                    'title': content.get('title'),
+                    'viewNum': content.get('viewCount'),
+                    'commentNum': content.get('commentCount'),
+                    'latestCommentTime': formatTimestamp(content.get('latestCommentTime')),
+                    'publishedAt': content.get('contributeTimeFormat'),
+                    'publishedBy': content.get('userId'),
+                    'bananaNum': content.get('bananaCount'),
+                    'contentType': self.section_type,
+                    'channelId': self.section['channelId']
+                }
 
     def get_one_page_contents(self, page_number):
+        res = None
         if self.section_type == contentTypes['article']:
             params = {
                 'pageNo': page_number,
@@ -91,49 +104,102 @@ class ContentSpider:
             )
 
         if self.section_type == contentTypes['video']:
-            params = {
-                'pageNo': page_number,
-                'size': 20,  # 视频默认20，传其他值也是无效的
-                'channelId': self.section.get('channelId'),
-                'sort': 0,
-            }
-            res = Proxy().request_acfun(
-                'get',
-                'http://www.acfun.cn/list/getlist',
-                params=params,
-                Referer="http://www.acfun.cn/v/list{}/index.htm".format(self.section.get('channelId'))
-            )
+            if self.is_get_latest_comment is True:
+                headers = {
+                    'Accept': 'application/json',
+                    'deviceType': '2',
+                    'Origin': 'http://m.acfun.cn',
+                    'productId': '2000',
+                    'Referer': 'http://m.acfun.cn/list/',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'
+                }
+
+                params = {
+                    'pageNo': page_number,
+                    'pageSize': 50,  # 最多50，超过50无效
+                    'parentChannelId': self.section.get('channelId'),
+                    'sort': 0,
+                }
+                res = Proxy().request_acfun(
+                    'get',
+                    'http://api.aixifan.com/searches/channel',
+                    params=params,
+                    headers=headers
+                )
+            else:
+                params = {
+                    'pageNo': page_number,
+                    'size': 20,  # 视频默认20，传其他值也是无效的
+                    'channelId': self.section.get('channelId'),
+                    'sort': 0,
+                }
+                res = Proxy().request_acfun(
+                    'get',
+                    'http://www.acfun.cn/list/getlist',
+                    params=params,
+                    Referer="http://www.acfun.cn/v/list{}/index.htm".format(self.section.get('channelId'))
+                )
 
         json = res.json()
         content_list = []
-        # return正常值
+
         if self.section_type == contentTypes['article']:
             content_list = json.get('data').get('articleList')
+
         if self.section_type == contentTypes['video']:
-            content_list = json.get('data').get('data')
+            if self.is_get_latest_comment is True:
+                content_list = json.get('data').get('list')
+            else:
+                content_list = json.get('data').get('data')
+
         if content_list is None or len(content_list) == 0:
             logging.error('content list为空, res is {data}, params is {params}'.format(data=json.get('data'), params=params))
+
         return [self.format_content_to_model(content) for content in content_list]
 
     def get_contents(self):
         content_list = []
+        need_crawl_comment_contents = []
         for page_number in range(1, self.total_page + 1):
             new_content_list = self.get_one_page_contents(page_number)
             content_list.extend(new_content_list)
             if len(new_content_list) == 0:
                 logging.error('获取到的新content list为空，参数 page_number = {page_number}, section {section}'.format(page_number=page_number, section=self.section))
-                continue
+                # continue
 
             if self.min_published_date is not None:
                 last_content = new_content_list[-1]
                 if arrow.get(last_content['publishedAt']) < arrow.get(self.min_published_date):
-                    return content_list
+                    return content_list, need_crawl_comment_contents
 
-            if self.min_latest_comment_time is not None:
-                last_content = new_content_list[-1]
-                if arrow.get(last_content['latestCommentTime']) < arrow.get(self.min_latest_comment_time):
-                    return content_list
-        return content_list
+            if self.is_get_latest_comment is True:
+                is_need_continue, need_crawl_contents = self.is_all_comment_crawled(new_content_list)
+                need_crawl_comment_contents.extend(need_crawl_contents)
+                if is_need_continue is False:
+                    return content_list, need_crawl_comment_contents
+        return content_list, need_crawl_comment_contents
+
+    def is_all_comment_crawled(self, contents):
+        session = Session()
+        content_ids = {content['id'] for content in contents}
+        contents_in_db = session.query(Content.id, Content.commentNum).filter(Content.id.in_(content_ids)).all()
+        contents_in_db_dict = {}
+        for c in contents_in_db:
+            contents_in_db_dict[c[0]] = {'id': c[0], 'commentNum': c[1]}
+
+        need_crawl_comment_contents = []
+        for content in contents:
+            content_in_db = contents_in_db_dict.get(content['id'])
+            comment_num_in_db = 0 if content_in_db is None else content_in_db.get('commentNum')
+            if content['commentNum'] > 0 and content['commentNum'] == comment_num_in_db:
+                return False, need_crawl_comment_contents
+            else:
+                if content['commentNum'] > 0:
+                    need_crawl_comment_contents.append(content)
+        return True, need_crawl_comment_contents
+
+
+
 
     def save_contents(self, contents):
         session = Session()
@@ -141,31 +207,30 @@ class ContentSpider:
         contents_in_db = session.query(Content.id).filter(Content.id.in_(content_ids)).all()
         content_ids_in_db = {content.id for content in contents_in_db}
 
-        need_to_save_content_ids = content_ids - content_ids_in_db
-        need_to_save_contents = list(filter(lambda a: a['id'] in need_to_save_content_ids, contents))
-        session.add_all([Content(**content) for content in need_to_save_contents])
+        need_to_add_content_ids = content_ids - content_ids_in_db
+        need_to_add_contents = list(filter(lambda a: a['id'] in need_to_add_content_ids, contents))
+        session.add_all([Content(**content) for content in need_to_add_contents])
         session.commit()
 
+        need_to_update_contents = list(filter(lambda a: a['id'] in content_ids_in_db, contents))
+        for content in need_to_update_contents:
+            session.query(Content).filter(Content.id == content.get('id')).update({
+                'commentNum': content.get('commentNum'),
+                'viewNum': content.get('viewNum')
+            })
         session.close()
 
     def crawl_contents(self):
         start = time()
-        start_get_time = time()
 
-        content_list = self.get_contents()
-        time_of_get = time() - start_get_time
-
-        start_save_time = time()
+        content_list, _ = self.get_contents()
         self.save_contents(content_list)
-        time_of_save = time() - start_save_time
 
         time_of_total = time() - start
         logging.info(
             '抓取' + self.section_type + '[' + self.section.get('name') + ']分区内容' +
             '[一共抓取' + str(len(content_list)) + '个内容]' +
-            '[一共花费' + str(time_of_total) + ' 秒]' +
-            '[请求数据花费' + str(time_of_get) + '秒]' +
-            '[处理并保存数据花费' + str(time_of_save) + '秒]'
+            '[一共花费' + str(time_of_total) + ' 秒]'
         )
         return content_list
 
@@ -187,13 +252,24 @@ def crawl_all_sections_articles(sections, **kwargs):
     thread_list = []
     start = time()
     for section in sections:
-        t = CrawlOneSection(
-            section=section,
-            section_type=contentTypes['article'],
-            ** kwargs
-        )
-        t.start()
-        thread_list.append(t)
+        if 'subSection' not in section:
+            t = CrawlOneSection(
+                section=section,
+                section_type=contentTypes['article'],
+                **kwargs
+            )
+            t.start()
+            thread_list.append(t)
+        else:
+            for subSection in sections['subSection']:
+                t = CrawlOneSection(
+                    section=subSection,
+                    section_type=contentTypes['article'],
+                    **kwargs
+                )
+                t.start()
+                thread_list.append(t)
+
     content_list = []
     for t in thread_list:
         t.join()
@@ -218,7 +294,7 @@ def crawl_all_sections_videos(sections, **kwargs):
             sub_sections = section['subSections']
             for sub_section in sub_sections:
                 t = CrawlOneSection(
-                    section=section,
+                    section=sub_section,
                     section_type=contentTypes['video'],
                     **kwargs
                 )
