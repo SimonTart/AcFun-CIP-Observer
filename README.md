@@ -16,7 +16,7 @@ DB_HOST mysql host
 DB_USER mysql 登录用户名
 DB_PASSPORT mysql 登录密码
 DB_NAME 数据库名
-PYTHON_ENV 运行环境，需要设置为productionproduction。
+PYTHON_ENV 运行环境 # 线上环境，需要设置为production
 ```
 ##### 通过配置稳健配置
 修改`config.py`中的`db`
