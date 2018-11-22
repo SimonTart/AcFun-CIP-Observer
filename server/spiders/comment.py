@@ -1,5 +1,6 @@
 from ..proxy import Proxy
 import logging
+import time
 import arrow
 from db import Session
 from ..models.comment import Comment
@@ -7,6 +8,9 @@ from ..models.spiderRecord import SpiderRecord
 from .content import ContentSpider
 from config import contentTypes
 from common.constant import record_types
+
+observer_info_logger = logging.getLogger('observer_info_logging')
+observer_error_logger = logging.getLogger('observer_error_logging')
 
 class CommentSpider:
     def __init__(
@@ -39,7 +43,8 @@ class CommentSpider:
         data = res.json().get('data')
         comment_list = data.get('commentList')
         if comment_list is None or len(comment_list) == 0:
-            logging.error('comment list为空, res is {data}, params is {params}'.format(data=data,params=params))
+            observer_error_logger.error('comment list为空, res is {data}, params is {params}'.format(data=data, params=params))
+            return {}, [], 1
         return data.get('commentContentArr'), data.get('commentList'), data.get('totalPage')
 
     def get_comments_by_order(self):
@@ -60,6 +65,9 @@ class CommentSpider:
 
         # 如果要抓取某个时间范围内的评论
         if self.min_comment_time is not None:
+            # 异常处理
+            if len(comment_list) == 0:
+                return comment_dict.values()
             last_comment_id = comment_list[-1]
             last_comment_date = comment_dict.get('c' + str(int(last_comment_id))).get('postDate')
             # 第一页已经超过了，直接返回
@@ -70,6 +78,9 @@ class CommentSpider:
             for page_number in range(2, int(total_page) + 1):
                 new_comment_dict, new_comment_list, _ = self.request_comments(page_number=page_number)
                 comment_dict.update(new_comment_dict)
+                # 异常处理
+                if len(comment_list) == 0:
+                    continue
 
                 last_comment_id = new_comment_list[-1]
                 last_comment_date = new_comment_dict.get('c' + str(int(last_comment_id))).get('postDate')
@@ -127,6 +138,8 @@ class CommentSpider:
 
 
 def crawl_content_latest_comments(section, section_type):
+    start_time = time.time()
+
     channel_id = section.get('channelId')
     record_type = record_types['crawl_content_comment']
     session = Session()
@@ -152,7 +165,7 @@ def crawl_content_latest_comments(section, section_type):
     content_spider = ContentSpider(section, section_type, **kwargs)
     content_list, need_crawl_comment_contents = content_spider.get_contents()
 
-    logging.info('[section_name]需要抓取评论的内容个数为{num}'.format(num=len(content_list), section_name=section.get('name')))
+    observer_info_logger.info('{section_name}需要抓取评论的内容个数为{num}'.format(num=len(need_crawl_comment_contents), section_name=section.get('name')))
 
     for content in need_crawl_comment_contents:
         CommentSpider(
@@ -171,4 +184,5 @@ def crawl_content_latest_comments(section, section_type):
     session.commit()
     session.close()
     content_spider.save_contents(content_list)
+    observer_info_logger.info('{section_name}抓取完成，总共花费{cost}秒'.format(cost=str(time.time() - start_time), section_name=section.get('name')))
 

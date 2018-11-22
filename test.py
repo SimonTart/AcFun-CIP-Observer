@@ -1,4 +1,4 @@
-import logging
+import log
 import traceback
 from server.spiders.content import crawl_all_sections_articles, crawl_all_sections_videos
 from server.spiders.comment import crawl_content_latest_comments, CommentSpider
@@ -7,11 +7,6 @@ from time import time
 from server import server
 from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s:%(levelname)s:%(message)s"
-)
 
 # 获取最近10页的内容
 # crawl_all_sections_articles(ARTICLE_SECTIONS, total_page=10)

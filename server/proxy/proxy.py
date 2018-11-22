@@ -3,6 +3,9 @@ import requests
 import logging
 from sentry import ravenClient
 
+proxy_info_logger = logging.getLogger('proxy_info_logging')
+proxy_error_logger = logging.getLogger('proxy_error_logging')
+
 
 class Proxy:
     def __init__(self):
@@ -77,7 +80,7 @@ class Proxy:
                     error_res = res
                     data = res.json().get('data')
                     if res.status_code == 200 and data is not None:
-                        logging.info('请求acfun成功: {method} {url} {kwargs}'.format(**{
+                        proxy_info_logger.info('请求acfun成功: {method} {url} {kwargs}'.format(**{
                             'method': method,
                             'url': url,
                             'kwargs': kwargs
@@ -88,10 +91,10 @@ class Proxy:
                             'status_code': res.status_code
                         }))
                 except Exception as e:
-                    logging.error('代理请求失败:[proxy:{proxy}]'.format(**{
+                    proxy_error_logger.error('代理请求失败:[proxy:{proxy}]'.format(**{
                         'proxy': proxy
                     }))
-                    logging.error(e)
+                    proxy_error_logger.error(e)
 
                     self.currentIpTryTime = self.currentIpTryTime + 1
                     if error_res is not None:
@@ -100,23 +103,23 @@ class Proxy:
                             # 被Tengine的漏斗原则给过滤了
                             if_tengine_error = True
                             self.currentIpTryTime = self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP
-                            logging.info("因为ACFUN Tengine漏桶机制问题导致请求失败")
+                            proxy_info_logger.info("因为ACFUN Tengine漏桶机制问题导致请求失败")
                         elif text.find('北京弹幕网络科技有限公司') != -1:
                             # 只是因为A站接口出问题了，返回的是500+ 或 404
                             if_acfun_error = True
-                            logging.info("因为ACFUN接口问题导致请求失败")
+                            proxy_info_logger.info("因为ACFUN接口问题导致请求失败")
 
-                        logging.error(error_res.status_code)
-                        logging.error(error_res.text)
+                        proxy_error_logger.error(error_res.status_code)
+                        proxy_error_logger.error(error_res.text)
 
             # 不是A站服务器原因也不是A站tengine漏桶机制过滤
             if if_acfun_error is not True and if_tengine_error is not True:
-                logging.info("删除代理：{}".format(proxy))
+                proxy_info_logger.info("删除代理：{}".format(proxy))
                 self.delete_proxy(proxy)
 
             self.currentRequestTyIpTime = self.currentRequestTyIpTime + 1
 
-        logging.error('请求acfun失败: {method} {url} {kwargs}'.format(**{
+        proxy_error_logger.error('请求acfun失败: {method} {url} {kwargs}'.format(**{
             'method': method,
             'url': url,
             'kwargs': kwargs
