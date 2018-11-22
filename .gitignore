@@ -14,3 +14,4 @@ pyvenv.cfg
 ENV
 lib64
 .idea/
+/ENV
