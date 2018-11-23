@@ -136,8 +136,6 @@ class CommentSpider:
         self.save_comments(comments)
         return comments
 
-def crawl_latest_comments_by_contents(content_id, min_comment_time):
-
 
 def crawl_content_latest_comments(section, section_type):
     start_time = time.time()
