@@ -5,7 +5,7 @@ contentTypes = {
     'video': 'video'
 }
 
-ARTICLE_SECTIONS = (
+ARTICLE_SECTIONS = [
     {
         'name': '综合',
         'channelId': 110,
@@ -34,7 +34,7 @@ ARTICLE_SECTIONS = (
         'channelId': 164,
         'realmIds': '8,10,11,9,12',
     }
-)
+]
 
 VIDEO_SECTIONS = [
     {

@@ -11,6 +11,8 @@ from config import contentTypes
 
 scheduler = BlockingScheduler()
 
+observer_info_logger = logging.getLogger('observer_info_logging')
+observer_error_logger = logging.getLogger('observer_error_logging')
 
 # 抓取内容的最新评论
 def crawl_section_content_latest_comment(sections, content_type):
@@ -21,9 +23,15 @@ def crawl_section_content_latest_comment(sections, content_type):
 def crawl_section_content_latest_comment_thread(sections, content_type):
     thread_list = []
     for section in sections:
-        t = threading.Thread(target=crawl_content_latest_comments, args=(section, content_type))
-        t.start()
-        thread_list.append(t)
+        if 'subSections' not in section:
+            t = threading.Thread(target=crawl_content_latest_comments, args=(section, content_type))
+            t.start()
+            thread_list.append(t)
+        else:
+            for sub_section in section['subSections']:
+                t = threading.Thread(target=crawl_content_latest_comments, args=(sub_section, content_type))
+                t.start()
+                thread_list.append(t)
 
     return thread_list
 
@@ -47,15 +55,15 @@ def crawl_all_content_latest_comment_thread():
         thread.join()
 
     end_time = time.time()
-    logging.info('---------------------- 抓取完成 ------------------')
-    logging.info('总共花费{}s'.format(end_time - start_time))
+    observer_info_logger.info('---------------------- 抓取完成 ------------------')
+    observer_info_logger.info('总共花费{}s'.format(end_time - start_time))
 
 
 def errorListener(event):
     ravenClient.capture(event.exception)
 
 
-scheduler.add_job(crawl_all_content_latest_comment_thread, name='抓取所有内容的最新评论', trigger='interval', minutes=2, max_instances=1)
+scheduler.add_job(crawl_all_content_latest_comment_thread, name='抓取所有内容的最新评论', trigger='interval', minutes=1, max_instances=1)
 
 
 scheduler.add_listener(errorListener, mask=apscheduler.events.EVENT_JOB_ERROR)
