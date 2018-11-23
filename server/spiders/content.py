@@ -223,10 +223,15 @@ class ContentSpider:
         need_to_update_contents = list(filter(lambda a: a['id'] in content_ids_in_db, contents))
         for content in need_to_update_contents:
             observer_info_logger.debug('更新数据库content, content={content}'.format(content=content))
-            session.query(Content).filter(Content.id == content.get('id')).update({
-                'commentNum': content.get('commentNum'),
-                'viewNum': content.get('viewNum')
-            })
+            observer_info_logger.debug('content_id, content={content}'.format(content=content))
+            db_content = session.query(Content).filter(Content.id == content.get('id')).one()
+            db_content.commentNum = content['commentNum']
+            db_content.viewNum = content['viewNum']
+            session.commit()
+            # session.query(Content).filter(Content.id == content.get('id')).update({
+            #     'commentNum': content['commentNum'],
+            #     'viewNum': content['viewNum']
+            # })
         session.close()
 
     def crawl_contents(self):
