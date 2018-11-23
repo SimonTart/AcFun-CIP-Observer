@@ -11,7 +11,7 @@ class Proxy:
     def __init__(self):
         self.MAX_GET_PROXY_TIME = 10  # 尝试获取代理的最大尝试次数
         self.currentGetProxyTime = 0  # 当前尝试获取代理的次数
-        self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP = 4 # 一个IP尝试请求acfun的最大次数
+        self.MAX_REQUEST_ACFUN_TIME_OF_ONE_IP = 2 # 一个IP尝试请求acfun的最大次数
         self.currentIpTryTime = 0  # 当前ip尝试的次数
         self.REQUEST_ACFUN_TIMEOUT = 2  # 请求acfun的超时设置
         self.MAX_RQUEST_ACFUN_TIME = 20  # 尝试使用最多多少个IP去请求acfun
