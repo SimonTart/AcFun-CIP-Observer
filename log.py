@@ -6,5 +6,5 @@ for log_name in ['proxy_info_logging', 'proxy_error_logging', 'observer_info_log
     logging_handler.setFormatter(logging_format)
 
     logger = logging.getLogger(log_name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logger.addHandler(logging_handler)
