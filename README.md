@@ -29,6 +29,7 @@ pip install < requirements.txt //安装依赖
 alembic upgrade head //建表
 ```
 #### 运行
+在项目目录下创建logs文件之后运行
 ```bash
 python  spider.py
 ```
