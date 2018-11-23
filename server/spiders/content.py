@@ -216,11 +216,13 @@ class ContentSpider:
 
         need_to_add_content_ids = content_ids - content_ids_in_db
         need_to_add_contents = list(filter(lambda a: a['id'] in need_to_add_content_ids, contents))
+        observer_info_logger.debug('添加数据库content, contentIds={content_ids}'.format(content_ids=need_to_add_content_ids))
         session.add_all([Content(**content) for content in need_to_add_contents])
         session.commit()
 
         need_to_update_contents = list(filter(lambda a: a['id'] in content_ids_in_db, contents))
         for content in need_to_update_contents:
+            observer_info_logger.debug('更新数据库content, content={content}'.format(content=content))
             session.query(Content).filter(Content.id == content.get('id')).update({
                 'commentNum': content.get('commentNum'),
                 'viewNum': content.get('viewNum')
