@@ -122,11 +122,10 @@ class CommentSpider:
             filter(lambda c: c['id'] in comment_ids_in_db and (c['isDelete'] is True or c['isUpDelete'] is True),
                    comments))
         for comment in need_update_comments:
-            session.query(Comment).filter(Comment.id == comment.get('id')).update({
-                'isDelete': comment.get('isDelete'),
-                'isUpDelete': comment.get('isUpDelete')
-            })
-
+            db_comment = session.query(Comment).filter(Comment.id == comment.get('id'))
+            db_comment.isDelete = comment.get('isDelete')
+            db_comment.isUpDelete = comment.get('isUpDelete')
+            session.commit()
         session.commit()
         session.close()
 
