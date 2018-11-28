@@ -100,6 +100,8 @@ class CommentSpider:
             'quoteId': comment.get('quoteId'),
             'isDelete': comment.get('isDelete'),
             'isUpDelete': comment.get('isUpDelete'),
+            'count': comment.get('count'),
+            'refCount': comment.get('refCount'),
             'contentId': self.content_id,
         }
 
