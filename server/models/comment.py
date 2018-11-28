@@ -14,6 +14,8 @@ class Comment(Base):
     isDelete = Column('is_delete', Boolean, nullable=False)
     isUpDelete = Column('is_up_delete', Boolean, nullable=False)
     contentId = Column('content_id', Integer, nullable=False)
+    count = Column('count', Integer, nullable=True)
+    refCount = Column('ref_count', Integer, nullable=True)
     updateAt = Column(
         'updated_at',
         DateTime,
