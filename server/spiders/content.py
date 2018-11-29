@@ -120,7 +120,7 @@ class ContentSpider:
                     'pageNo': page_number,
                     'pageSize': 50,  # 最多50，超过50无效
                     'channelIds': self.section.get('channelId'),
-                    'sort': 0,
+                    'sort': 5,
                 }
                 res = Proxy().request_acfun(
                     'get',
