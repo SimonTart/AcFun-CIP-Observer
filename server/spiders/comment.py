@@ -181,7 +181,7 @@ def crawl_content_latest_comments(section, section_type):
     threads = []
     step = 20
     for start in range(0, content_len, step):
-        end = start + step if start + step <= content_len else content_len
+        end = start + step
         t = threading.Thread(target=crawl_latest_comments_by_contents, args=(need_crawl_comment_contents[start:end], last_success_date))
         t.start()
         threads.append(t)
