@@ -42,7 +42,7 @@ class CommentSpider:
         )
         data = res.json().get('data')
         comment_list = data.get('commentList')
-        if comment_list is None or len(comment_list) == 0:
+        if comment_list is None or len(comment_list) == 0 or data.get('commentContentArr') is None:
             observer_error_logger.error('comment list为空, res is {data}, params is {params}'.format(data=data, params=params))
             return {}, [], 1
         return data.get('commentContentArr'), data.get('commentList'), data.get('totalPage')
