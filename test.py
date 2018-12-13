@@ -2,7 +2,7 @@ import log
 import traceback
 from server.spiders.content import crawl_all_sections_articles, crawl_all_sections_videos
 from server.spiders.comment import crawl_content_latest_comments, CommentSpider
-from server.schedule import crawl_all_content_latest_comment, crawl_all_content_latest_comment_thread
+from server.schedule import crawl_all_content_latest_comment, crawl_all_content_latest_comment_thread, crawl_section_content_latest_comment_thread
 from time import time
 from server import server
 from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
@@ -20,7 +20,7 @@ from config import ARTICLE_SECTIONS, VIDEO_SECTIONS, contentTypes
 # crawl_all_sections_articles(ARTICLE_SECTIONS, article_order_type=1, is_get_latest_comment=True)
 
 # 获取content所有的评论
-CommentSpider(content_id=337855, crawl_all=True).crawl_comments()
+# CommentSpider(content_id=337855, crawl_all=True).crawl_comments()
 
 # 抓取时间范围内的评论
 # CommentSpider(content_id=4667805, min_comment_time='2018-10-26 12:00:00').crawl_comments()
@@ -35,3 +35,5 @@ CommentSpider(content_id=337855, crawl_all=True).crawl_comments()
 # crawl_all_content_latest_comment()
 # crawl_all_content_latest_comment_thread()
 
+# 抓取文章区最近的评论
+crawl_section_content_latest_comment_thread(ARTICLE_SECTIONS, contentTypes['article'])

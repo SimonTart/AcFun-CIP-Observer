@@ -8,9 +8,11 @@ from ..models.spiderRecord import SpiderRecord
 from .content import ContentSpider
 from config import contentTypes
 from common.constant import record_types
+import threading
 
 observer_info_logger = logging.getLogger('observer_info_logging')
 observer_error_logger = logging.getLogger('observer_error_logging')
+
 
 class CommentSpider:
     def __init__(
@@ -60,8 +62,6 @@ class CommentSpider:
                 new_comment_dict, comment_list, _ = self.request_comments(page_number=page_number)
                 comment_dict.update(new_comment_dict)
             return comment_dict.values()
-
-
 
         # 如果要抓取某个时间范围内的评论
         if self.min_comment_time is not None:
@@ -138,6 +138,14 @@ class CommentSpider:
         return comments
 
 
+def crawl_latest_comments_by_contents(contents, min_comment_time):
+    for content in contents:
+        CommentSpider(
+            content_id=content['id'],
+            min_comment_time=min_comment_time
+        ).crawl_comments()
+
+
 def crawl_content_latest_comments(section, section_type):
     start_time = time.time()
 
@@ -166,13 +174,19 @@ def crawl_content_latest_comments(section, section_type):
     content_spider = ContentSpider(section, section_type, **kwargs)
     content_list, need_crawl_comment_contents = content_spider.get_contents()
 
-    observer_info_logger.info('{section_name}需要抓取评论的内容个数为{num}'.format(num=len(need_crawl_comment_contents), section_name=section.get('name')))
+    observer_info_logger.info('{section_name}需要抓取评论的内容个数为{num}'.format(num=len(need_crawl_comment_contents),
+                                                                       section_name=section.get('name')))
+    content_len = len(need_crawl_comment_contents)
+    threads = []
+    step = 20
+    for start in range(0, content_len, step):
+        end = start + step
+        t = threading.Thread(target=crawl_latest_comments_by_contents, args=(need_crawl_comment_contents[start:end], last_success_date))
+        t.start()
+        threads.append(t)
 
-    for content in need_crawl_comment_contents:
-        CommentSpider(
-            content_id=content['id'],
-            min_comment_time=last_success_date
-        ).crawl_comments()
+    for t in threads:
+        t.join()
 
     if spider_record is None:
         session.add(SpiderRecord(
@@ -185,5 +199,5 @@ def crawl_content_latest_comments(section, section_type):
     session.commit()
     session.close()
     content_spider.save_contents(content_list)
-    observer_info_logger.info('{section_name}抓取完成，总共花费{cost}秒'.format(cost=str(time.time() - start_time), section_name=section.get('name')))
-
+    observer_info_logger.info(
+        '{section_name}抓取完成，总共花费{cost}秒'.format(cost=str(time.time() - start_time), section_name=section.get('name')))
