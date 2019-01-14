@@ -37,12 +37,13 @@ updateTip = """<div data-id="upgrade-tip" style="display: flex; align-items: cen
 @commentApis.route('/v2/comment', methods=['GET'])
 @cross_origin()
 def commentV2():
-    id = request.args.get('id')
-    if not is_int(id):
+    content_id = request.args.get('content_id')
+    count = request.args.get('count')
+    if not is_int(content_id) or not is_int(count):
         return '', 400
-  
+
     session = Session()
-    comments = session.query(Comment.content, Comment.userId).filter(Comment.id==int(id)).all()
+    comments = session.query(Comment.content, Comment.userId).filter(Comment.contentId==int(content_id)).filter(Comment.count==int(count)).all()
     session.close()
     if len(comments) == 1:
         return jsonify({
