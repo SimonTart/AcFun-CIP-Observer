@@ -9,20 +9,20 @@ ARTICLE_SECTIONS = [
     {
         'name': '综合',
         'channelId': 110,
-        'realmIds': '5,22,1,33,2,4',
+        'realmIds': '5,22,3,4',
     }, {
         'name': '工作·情感',
         'channelId': 73,
-        'realmIds': '25,6,7',
+        'realmIds': '25,34,7,6,17,1,2',
     }, {
         'name': '涂图话画',
         'channelId': 184,
-        'realmIds': '17,18',
+        'realmIds': '18,14,39',
     },
     {
         'name': '动漫文化',
         'channelId': 74,
-        'realmIds': '13,14',
+        'realmIds': '13,31',
     },
     {
         'name': '漫画·轻小说',
@@ -32,7 +32,7 @@ ARTICLE_SECTIONS = [
     {
         'name': '游戏',
         'channelId': 164,
-        'realmIds': '8,10,11,9,12',
+        'realmIds': '8,11',
     }
 ]
 
