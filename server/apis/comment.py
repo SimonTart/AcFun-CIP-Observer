@@ -43,11 +43,12 @@ def commentV2():
         return '', 400
 
     session = Session()
-    comments = session.query(Comment.content, Comment.userId).filter(Comment.contentId==int(content_id)).filter(Comment.count==int(count)).all()
+    comments = session.query(Comment.content, Comment.userId, Comment.postDate).filter(Comment.contentId==int(content_id)).filter(Comment.count==int(count)).all()
     session.close()
     if len(comments) == 1:
         return jsonify({
             'content': processEmotion(comments[0].content),
+            'postDate': comments[0].postDate,
             'userId': comments[0].userId,
             'needUpdateVersion': '1.0',
             'updateTip': updateTip
