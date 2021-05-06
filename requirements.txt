@@ -8,7 +8,7 @@ circus==0.14.0
 click==6.7
 cssselect==1.0.1
 Flask==0.12.2
-Flask-Cors==3.0.3
+Flask-Cors==3.0.9
 html5lib==0.999999999
 idna==2.6
 iowait==0.2
